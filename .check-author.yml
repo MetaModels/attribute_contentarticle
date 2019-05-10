@@ -1,0 +1,12 @@
+ignore:
+  - "Mini Model <minimodel@metamodel.me>"
+  - "Scrutinizer Auto-Fixer <auto-fixer@scrutinizer-ci.com>"
+
+exclude:
+  languages
+
+mapping:
+  "Andreas Dziemba <adziemba@web.de>":
+          - "Andreas Dziemba <dziemba@men-at-work.de>"
+          - "Andreas Dziemba <adziemba@web.de>"
+          - "adziemba <adziemba@web.de>"

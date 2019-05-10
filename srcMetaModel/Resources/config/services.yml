@@ -1,0 +1,7 @@
+services:
+    metamodels.attribute_contentarticle.factory:
+        class: MetaModels\AttributeContentArticleBundle\Attribute\AttributeTypeFactory
+        arguments:
+            - "@event_dispatcher"
+        tags:
+            - { name: metamodels.attribute_factory }

@@ -1,0 +1,5 @@
+<div class="article<?php echo $this->additional_class; ?>">
+    <?php if (is_array($this->raw)) {
+        echo implode('', $this->raw['value']);
+    } ?>
+</div>

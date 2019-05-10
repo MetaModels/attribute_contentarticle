@@ -1,0 +1,65 @@
+{
+  "name": "metamodels/attribute_contentarticle",
+  "description": "MetaModels attribute for content article",
+  "keywords": [
+    "contao",
+    "metamodels",
+    "attribute",
+    "article"
+  ],
+  "type": "contao-bundle",
+  "homepage": "http://now.metamodel.me/",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Andreas Dziemba",
+      "email": "dziemba@men-at-work.de",
+      "homepage": "http://www.men-at-work.de/",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "mail@metamodel.me",
+    "issues": "https://github.com/MetaModels/attribute_contentarticle/issues",
+    "wiki": "http://de.contaowiki.org/MetaModels",
+    "irc": "irc://irc.freenode.org/contao.mm",
+    "source": "https://github.com/MetaModels/attribute_contentarticle"
+  },
+  "require": {
+    "php": "^7.1",
+    "contao-community-alliance/dc-general": "^2.1.3",
+    "contao/core-bundle": "^4.4.8",
+    "metamodels/core": "^2.1.1",
+    "symfony/dependency-injection": "^3.3 || ^4.0",
+    "symfony/http-kernel": "^3.3 || ^4.0",
+    "ext-pdo": "*"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.1",
+    "menatwork/contao-multicolumnwizard-bundle": "^3.4",
+    "phpcq/all-tasks": "^1.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "MetaModels\\AttributeContentArticleBundle\\": "srcMetaModel/",
+      "Contao\\": "srcContao/"
+    },
+    "files": [
+      "srcMetaModel/deprecated-autoload.php"
+    ]
+  },
+  "extra": {
+    "contao-manager-plugin": "MetaModels\\AttributeContentArticleBundle\\ContaoManager\\Plugin",
+    "contao": {
+      "transifex": {
+        "project": "metamodels",
+        "prefix": "attribute_contentarticle-",
+        "languages_cto": "srcMetaModel/Resources/contao/languages",
+        "languages_tx": ".tx"
+      }
+    },
+    "branch-alias": {
+      "dev-master": "2.1.x-dev"
+    }
+  }
+}
