@@ -86,7 +86,7 @@ class ContentArticle extends BaseComplex
     public function getFieldDefinition($arrOverrides = array())
     {
         $arrFieldDef              = parent::getFieldDefinition($arrOverrides);
-        $arrFieldDef['inputType'] = 'MetaModelAttributeContentArticle';
+        $arrFieldDef['inputType'] = 'contentarticle';
 
         return $arrFieldDef;
     }

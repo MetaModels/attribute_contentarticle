@@ -39,28 +39,6 @@ class BackendEventListener
     private $intDuplicationSourceId;
 
     /**
-     * Set the language for the widget.
-     *
-     * @param ManipulateWidgetEvent $event The event.
-     *
-     * @return void
-     */
-    public function setWidgetLanguage(ManipulateWidgetEvent $event)
-    {
-
-        if ($event->getWidget()->type != 'article') {
-            return;
-        }
-
-        /** @var Driver $dataProvider */
-        $dataProvider = $event->getEnvironment()->getDataProvider($event->getModel()->getProviderName());
-        $language     = $dataProvider->getCurrentLanguage() ?: '-';
-
-        $event->getWidget()->lang = $language;
-    }
-
-
-    /**
      * Handle Post Duplication Model.
      *
      * @param PostDuplicateModelEvent $event The event.

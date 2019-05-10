@@ -18,5 +18,5 @@
  * @filesource
  */
 
-$GLOBALS['TL_DCA']['tl_metamodel_attribute']['metapalettes']['contentarticle extends _simpleattribute_'] =
+$GLOBALS['TL_DCA']['tl_metamodel_attribute']['metapalettes']['contentarticle extends _complexattribute_'] =
     array();

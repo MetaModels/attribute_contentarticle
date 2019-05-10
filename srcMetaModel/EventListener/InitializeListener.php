@@ -92,17 +92,12 @@ class InitializeListener
      */
     public function clearBackendModules(&$localMenu)
     {
-
         $strModule = Input::get('do');
         $strTable  = Input::get('table');
 
         if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
-            $GLOBALS['BE_MOD']['content'][$strModule]['tables'][]           = 'tl_content';
-            $GLOBALS['BE_MOD']['content'][$strModule]['callback']           = null;
-            $GLOBALS['BE_MOD']['content'][$strModule]['addMainLangContent'] = [
-                'MetaModels\\AttributeArticleBundle\\Table\\MetaModelAttributeArticle',
-                'addMainLangContent'
-            ];
+            $GLOBALS['BE_MOD']['content'][$strModule]['tables'][] = 'tl_content';
+            $GLOBALS['BE_MOD']['content'][$strModule]['callback'] = null;
         }
     }
 }

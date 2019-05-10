@@ -48,8 +48,8 @@ class ArticleContent extends \tl_content
     public function save(\DataContainer $dataContainer)
     {
         \Database::getInstance()
-            ->prepare('UPDATE tl_content SET mm_slot=?, mm_lang=? WHERE id=?')
-            ->execute(\Input::get('slot'), \Input::get('lang'), $dataContainer->id);
+            ->prepare('UPDATE tl_content SET mm_slot=? WHERE id=?')
+            ->execute(\Input::get('slot'), $dataContainer->id);
     }
 
     /**

@@ -23,11 +23,11 @@ namespace MetaModels\AttributeContentArticleBundle\Widgets;
 use Contao\Widget;
 
 /**
- * Class ArticleWidget
+ * Class ContentArticleWidget
  *
  * @package MetaModels\AttributeContentArticleBundle\Widgets
  */
-class ArticleWidget extends Widget
+class ContentArticleWidget extends Widget
 {
 
     /**
@@ -43,13 +43,6 @@ class ArticleWidget extends Widget
      * @var boolean
      */
     protected $blnForAttribute = false;
-
-    /**
-     * The language of the current context. If no language support is needed or not set use '-'.
-     *
-     * @var string
-     */
-    protected $lang = '-';
 
     /**
      * Template.
@@ -69,17 +62,12 @@ class ArticleWidget extends Widget
      */
     public function generate()
     {
-        // Update the language.
-        $currentLang = $GLOBALS['TL_LANGUAGE'];
-        $this->lang  = ($currentLang) ?: '-';
-
         $strQuery = http_build_query([
             'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
             'table'  => 'tl_content',
             'ptable' => $this->strTable,
             'id'     => $this->currentRecord,
             'slot'   => $this->strName,
-            'lang'   => $this->lang,
             'popup'  => 1,
             'nb'     => 1,
             'rt'     => REQUEST_TOKEN,

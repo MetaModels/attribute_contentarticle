@@ -23,7 +23,7 @@ namespace MetaModels\AttributeContentArticleBundle\ContaoManager;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use MetaModels\AttributeContentArticleBundle\AttributeContentArticleBundle;
+use MetaModels\AttributeContentArticleBundle\MetaModelsAttributeContentArticleBundle;
 use MetaModels\CoreBundle\MetaModelsCoreBundle;
 
 /**
@@ -37,7 +37,7 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(AttributeContentArticleBundle::class)
+            BundleConfig::create(MetaModelsAttributeContentArticleBundle::class)
                 ->setLoadAfter(
                     [
                         MetaModelsCoreBundle::class
