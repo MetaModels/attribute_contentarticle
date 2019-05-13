@@ -1,6 +1,5 @@
 services:
-    metamodels:
-        attribute_contentarticle.listeners.backend_listener:
+    metamodels.attribute_contentarticle.listeners.backend_listener:
         class: MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener
         tags:
          - {
@@ -13,7 +12,7 @@ services:
                 event: 'dc-general.model.post-paste',
                 method: 'handlePostPasteModel'
            }
-    attribute_contentarticle.backend_listner.get_options:
+    metamodels.attribute_contentarticle.backend_listner.get_options:
         class: MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener
         arguments:
             - '@metamodels.factory'
@@ -23,7 +22,7 @@ services:
                 event: 'men-at-work.multi-column-wizard.get-options',
                 method: getOptions
            }
-    attribute_contentarticle.backend_listner.auth.listener:
+    metamodels.attribute_contentarticle.backend_listner.auth.listener:
         class: MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener
         arguments:
             - "@security.token_storage"
@@ -33,4 +32,4 @@ services:
         tags:
             -   name: kernel.event_listener
                 event: kernel.request
-                priority: -600
+                priority: -6000

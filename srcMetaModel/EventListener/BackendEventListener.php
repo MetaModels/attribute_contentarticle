@@ -23,8 +23,8 @@ namespace MetaModels\AttributeContentArticleBundle\EventListener;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
 use ContaoCommunityAlliance\DcGeneral\Event\PostDuplicateModelEvent;
 use ContaoCommunityAlliance\DcGeneral\Event\PostPasteModelEvent;
-use MetaModels\DcGeneral\Data\Driver;
 use MetaModels\DcGeneral\Data\Model;
+use MetaModels\DcGeneral\Data\Driver;
 
 /**
  * Handles event operations on tl_metamodel_dcasetting.
@@ -37,7 +37,7 @@ class BackendEventListener
      * @var int
      */
     private $intDuplicationSourceId;
-
+    
     /**
      * Handle Post Duplication Model.
      *

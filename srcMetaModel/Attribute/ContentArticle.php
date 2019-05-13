@@ -68,7 +68,6 @@ class ContentArticle extends BaseComplex
             // @codingStandardsIgnoreEnd
             $eventDispatcher = System::getContainer()->get('event_dispatcher');
         }
-
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -151,7 +150,7 @@ class ContentArticle extends BaseComplex
             if ($objContent !== null) {
                 while ($objContent->next()) {
                     if ($objContent->mm_slot == $strColumn) {
-                        $arrContent[] = $this->getContentElement($objContent->current());
+                        $arrContent[] = \Controller::getContentElement($objContent->current());
                     }
                 }
             }

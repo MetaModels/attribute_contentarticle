@@ -23,6 +23,7 @@ namespace MetaModels\AttributeContentArticleBundle\EventListener;
 use Contao\Input;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use MetaModels\ViewCombination\ViewCombination;
+use phpDocumentor\Reflection\Types\Mixed_;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -75,7 +76,6 @@ class InitializeListener
         if (null === $token || $this->authenticationTrustResolver->isAnonymous($token)) {
             return;
         }
-
         $localMenu = &$GLOBALS['BE_MOD'];
         $this->clearBackendModules($localMenu);
     }
@@ -88,7 +88,6 @@ class InitializeListener
      * @return void
      *
      * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function clearBackendModules(&$localMenu)
     {
@@ -96,8 +95,19 @@ class InitializeListener
         $strTable  = Input::get('table');
 
         if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
-            $GLOBALS['BE_MOD']['content'][$strModule]['tables'][] = 'tl_content';
-            $GLOBALS['BE_MOD']['content'][$strModule]['callback'] = null;
+            $needsToBeAdded = true;
+            foreach ($GLOBALS['BE_MOD'] as $key => $mod) {
+                if (isset($mod[$strModule])) {
+                    $localMenu[$key][$strModule]['tables'][] = 'tl_content';
+                    $localMenu[$key][$strModule]['callback'] = null;
+                    $needsToBeAdded                          = false;
+                    break;
+                }
+            }
+            if ($needsToBeAdded) {
+                $localMenu['content'][$strModule]['tables'][] = 'tl_content';
+                $localMenu['content'][$strModule]['callback'] = null;
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ $strModule = \Input::get('do');
 $strTable  = \Input::get('table');
 
 // Change TL_Content for the article popup
-if (\substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
+if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']                         =
         'TableMetaModelsContentArticle';
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable']                                =
