@@ -13,6 +13,7 @@
  * @package    MetaModels
  * @subpackage AttributeContentArticle
  * @author     Andreas Dziemba <adziemba@web.de>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  2012-2019 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
@@ -139,7 +140,7 @@ class ContentArticle extends BaseComplex
             // Continue if it's a recursive call
             $strCallId = $strTable . '_' . $strColumn . '_' . $intId;
             if (isset(static::$arrCallIds[$strCallId])) {
-                $arrData[$intId]['value'] = sprintf('RECURSION: %s', $strCallId);
+                $arrData[$intId]['value'] = [sprintf('RECURSION: %s', $strCallId)];
                 continue;
             }
             static::$arrCallIds[$strCallId] = true;
