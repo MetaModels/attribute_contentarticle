@@ -41,12 +41,9 @@
   },
   "autoload": {
     "psr-4": {
-      "MetaModels\\AttributeContentArticleBundle\\": "srcMetaModel/",
-      "Contao\\": "srcContao/"
-    },
-    "files": [
-      "srcMetaModel/deprecated-autoload.php"
-    ]
+      "MetaModels\\AttributeContentArticleBundle\\": "src/",
+      "Contao\\": "driver/"
+    }
   },
   "extra": {
     "contao-manager-plugin": "MetaModels\\AttributeContentArticleBundle\\ContaoManager\\Plugin",
