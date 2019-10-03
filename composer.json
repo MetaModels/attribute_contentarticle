@@ -50,14 +50,6 @@
   },
   "extra": {
     "contao-manager-plugin": "MetaModels\\AttributeContentArticleBundle\\ContaoManager\\Plugin",
-    "contao": {
-      "transifex": {
-        "project": "metamodels",
-        "prefix": "attribute_contentarticle-",
-        "languages_cto": "srcMetaModel/Resources/contao/languages",
-        "languages_tx": ".tx"
-      }
-    },
     "branch-alias": {
       "dev-master": "2.1.x-dev"
     }
