@@ -20,9 +20,7 @@
 
 $GLOBALS['TL_DCA']['tl_metamodel_dcasetting']['metasubselectpalettes']['attr_id']['contentarticle'] = array
 (
-    'presentation' => array(
-        'tl_class',
-    ),
-    'functions'    => array(),
-    'overview'     => array()
+    'presentation' => ['tl_class'],
+    'functions'    => [],
+    'overview'     => []
 );

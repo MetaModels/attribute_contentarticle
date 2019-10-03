@@ -23,7 +23,6 @@ namespace MetaModels\AttributeContentArticleBundle\EventListener;
 use Contao\Input;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use MetaModels\ViewCombination\ViewCombination;
-use phpDocumentor\Reflection\Types\Mixed_;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -77,7 +76,7 @@ class InitializeListener
             return;
         }
         $localMenu = &$GLOBALS['BE_MOD'];
-        $this->clearBackendModules($localMenu);
+        $this->addBackendModules($localMenu);
     }
 
     /**
@@ -89,7 +88,7 @@ class InitializeListener
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function clearBackendModules(&$localMenu)
+    public function addBackendModules(&$localMenu)
     {
         $strModule = Input::get('do');
         $strTable  = Input::get('table');

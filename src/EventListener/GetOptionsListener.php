@@ -54,11 +54,6 @@ class GetOptionsListener
      */
     public function getOptions(GetOptionsEvent $event)
     {
-        switch ($event->getPropertyName()) {
-            case '':
-                break;
-            default:
-                break;
-        }
+        // Nothing to do.
     }
 }

@@ -18,6 +18,8 @@
  * @filesource
  */
 
+use MetaModels\AttributeContentArticleBundle\Table\ArticleContent;
+
 $GLOBALS['TL_DCA']['tl_content']['fields']['mm_slot'] = [
     'sql' => "varchar(255) NOT NULL default ''",
 ];
@@ -32,23 +34,23 @@ if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable']                                =
         \Input::get('ptable');
     $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][]                   =
-        array(
-            'MetaModels\\AttributeContentArticleBundle\\Table\\ArticleContent',
+        [
+            ArticleContent::class,
             'save'
-        );
+        ];
     $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][]                     =
-        array(
-            'MetaModels\\AttributeContentArticleBundle\\Table\\ArticleContent',
+        [
+            ArticleContent::class,
             'checkPermission'
-        );
+        ];
     $GLOBALS['TL_DCA']['tl_content']['list']['operations']['toggle']['button_callback'] =
-        array(
-            'MetaModels\\AttributeContentArticleBundle\\Table\\ArticleContent',
+        [
+            ArticleContent::class,
             'toggleIcon'
-        );
+        ];
     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]                     =
-        array(
+        [
             'mm_slot=?',
             \Input::get('slot')
-        );
+        ];
 }
