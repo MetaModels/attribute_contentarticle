@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class ArticleContent
+class ArticleContent extends \tl_content
 {
     /**
      * Save Data Container.
@@ -45,7 +45,7 @@ class ArticleContent
      */
     public function save(\DataContainer $dataContainer)
     {
-        \Database::getInstance()
+        Database::getInstance()
                  ->prepare('UPDATE tl_content SET mm_slot=? WHERE id=?')
                  ->execute(\Input::get('slot'), $dataContainer->id);
     }
