@@ -1,35 +1,33 @@
 services:
-    metamodels.attribute_contentarticle.listeners.backend_listener:
-        class: MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener
-        tags:
-         - {
-                name: kernel.event_listener,
-                event: 'dc-general.model.post-duplicate',
-                method: 'handlePostDuplicationModel'
-           }
-         - {
-                name: kernel.event_listener,
-                event: 'dc-general.model.post-paste',
-                method: 'handlePostPasteModel'
-           }
-    metamodels.attribute_contentarticle.backend_listner.get_options:
-        class: MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener
-        arguments:
-            - '@metamodels.factory'
-        tags:
-         - {
-                name: kernel.event_listener,
-                event: 'men-at-work.multi-column-wizard.get-options',
-                method: getOptions
-           }
-    metamodels.attribute_contentarticle.backend_listner.auth.listener:
-        class: MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener
-        arguments:
-            - "@security.token_storage"
-            - "@security.authentication.trust_resolver"
-            - "@contao.routing.scope_matcher"
-            - "@metamodels.view_combination"
-        tags:
-            -   name: kernel.event_listener
-                event: kernel.request
-                priority: -6000
+  metamodels.attribute_contentarticle.listeners.backend_listener:
+    class: MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener
+    tags:
+      -
+        name: kernel.event_listener
+        event: 'dc-general.model.post-duplicate'
+        method: 'handlePostDuplicationModel'
+      -
+        name: kernel.event_listener
+        event: 'dc-general.model.post-paste'
+        method: 'handlePostPasteModel'
+  metamodels.attribute_contentarticle.backend_listner.get_options:
+    class: MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener
+    arguments:
+      - '@metamodels.factory'
+    tags:
+      -
+        name: kernel.event_listener
+        event: 'men-at-work.multi-column-wizard.get-options'
+        method: getOptions
+  metamodels.attribute_contentarticle.backend_listner.auth.listener:
+    class: MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener
+    arguments:
+      - "@security.token_storage"
+      - "@security.authentication.trust_resolver"
+      - "@contao.routing.scope_matcher"
+      - "@metamodels.view_combination"
+    tags:
+      -
+        name: kernel.event_listener
+        event: kernel.request
+        priority: -6000
