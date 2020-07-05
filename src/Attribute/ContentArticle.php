@@ -75,14 +75,6 @@ class ContentArticle extends BaseComplex
     /**
      * {@inheritdoc}
      */
-    public function getSQLDataType()
-    {
-        return 'varchar(255) NOT NULL default \'\'';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFieldDefinition($arrOverrides = array())
     {
         $arrFieldDef              = parent::getFieldDefinition($arrOverrides);
