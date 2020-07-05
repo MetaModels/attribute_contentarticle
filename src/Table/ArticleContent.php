@@ -23,6 +23,7 @@ namespace MetaModels\AttributeContentArticleBundle\Table;
 use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Database;
+use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
 use Contao\Session;
@@ -34,20 +35,32 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
-class ArticleContent extends \tl_content
+class ArticleContent
 {
+    /**
+     * Return the "toggle visibility" button
+     *
+     * @return string The icon url with all information.
+     */
+    public function toggleIcon()
+    {
+        $controller = new \tl_content();
+
+        return call_user_func_array([$controller, 'toggleIcon'], func_get_args());
+    }
+
     /**
      * Save Data Container.
      *
-     * @param \DataContainer $dataContainer The DC Driver.
+     * @param DataContainer $dataContainer The DC Driver.
      *
      * @return void
      */
-    public function save(\DataContainer $dataContainer)
+    public function save(DataContainer $dataContainer)
     {
         Database::getInstance()
-                 ->prepare('UPDATE tl_content SET mm_slot=? WHERE id=?')
-                 ->execute(\Input::get('slot'), $dataContainer->id);
+                ->prepare('UPDATE tl_content SET mm_slot=? WHERE id=?')
+                ->execute(Input::get('slot'), $dataContainer->id);
     }
 
     /**
@@ -72,7 +85,7 @@ class ArticleContent extends \tl_content
                               ->execute();
 
             $session                   = $objSession->all();
-            $session['CURRENT']['IDS'] = array_diff($session['CURRENT']['IDS'], $objCes->fetchEach('cteAlias'));
+            $session['CURRENT']['IDS'] = \array_diff($session['CURRENT']['IDS'], $objCes->fetchEach('cteAlias'));
             $objSession->replace($session);
         }
 
@@ -81,7 +94,7 @@ class ArticleContent extends \tl_content
         }
 
         $strParentTable = Input::get('ptable');
-        $strParentTable = preg_replace('#[^A-Za-z0-9_]#', '', $strParentTable);
+        $strParentTable = \preg_replace('#[^A-Za-z0-9_]#', '', $strParentTable);
 
         // Check the current action
         switch (Input::get('act')) {
@@ -114,7 +127,10 @@ class ArticleContent extends \tl_content
                                   ->execute($strParentTable, CURRENT_ID);
 
                 $session                   = Session::getInstance()->getData();
-                $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objCes->fetchEach('id'));
+                $session['CURRENT']['IDS'] = \array_intersect(
+                    $session['CURRENT']['IDS'],
+                    $objCes->fetchEach('id')
+                );
                 $objSession->replace($session);
                 break;
 
@@ -138,7 +154,9 @@ class ArticleContent extends \tl_content
      * Check access to a particular content element.
      *
      * @param integer $accessId Check ID.
+     *
      * @param array   $ptable   Parent Table.
+     *
      * @param boolean $blnIsPid Is the ID a PID.
      *
      * @return bool
