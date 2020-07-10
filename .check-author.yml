@@ -7,6 +7,8 @@ exclude:
 
 mapping:
   "Andreas Dziemba <adziemba@web.de>":
-          - "Andreas Dziemba <dziemba@men-at-work.de>"
-          - "Andreas Dziemba <adziemba@web.de>"
-          - "adziemba <adziemba@web.de>"
+    - "Andreas Dziemba <dziemba@men-at-work.de>"
+    - "Andreas Dziemba <adziemba@web.de>"
+    - "adziemba <adziemba@web.de>"
+  'Ingolf Steinhardt <info@e-spin.de>':
+    - 'zonky <info@e-spin.de>'
