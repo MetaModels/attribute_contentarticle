@@ -31,6 +31,8 @@ namespace Contao;
 class DC_TableMetaModelsContentArticle extends DC_Table
 {
     /**
+     * Remove some elements from the basic class.
+     *
      * @inheritDoc
      */
     protected function parentView()
@@ -38,7 +40,9 @@ class DC_TableMetaModelsContentArticle extends DC_Table
         return preg_replace(
             [
                 // Remove the "Edit parent" Button (see: \Contao\DC_Table::parentView).
-                '/(<div class="tl_header [^>]*>.+<div class="tl_content_right">.+)<a.+class="edit"[^>]+>.*?(?=<\/a>)<\/a>(.+<\/div>)/s',
+                '/(<div class="tl_header [^>]*>.+<div class="tl_content_right">.+)' .
+                '<a.+class="edit"[^>]+>.*?(?=<\/a>)<\/a>' .
+                '(.+<\/div>)/s',
                 // Remove the parent entry info.
                 '#<td><span class="tl_label">tstamp:</span>.*\n.*</td>#',
             ],

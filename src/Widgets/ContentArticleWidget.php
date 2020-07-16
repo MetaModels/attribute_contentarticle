@@ -61,6 +61,9 @@ class ContentArticleWidget extends Widget
     protected $hasEmptyId = false;
 
     /**
+     * Check if we have an id, if not set a flag.
+     * After this check call the parent constructor.
+     *
      * @inheritDoc
      */
     public function __construct($arrAttributes = null)
@@ -91,7 +94,8 @@ class ContentArticleWidget extends Widget
         // If we have no id, we get some trouble with the modal. So we disabled the button.
         if ($this->hasEmptyId) {
             return sprintf(
-                '<p class="tl_help tl_tip">%s</p><button type="button" name="%s" class="tl_submit" disabled>%s</button>',
+                '<p class="tl_help tl_tip">%s</p>' .
+                '<button type="button" name="%s" class="tl_submit" disabled>%s</button>',
                 $GLOBALS['TL_LANG']['attribute_contentarticle']['missing_id'],
                 $this->name,
                 $edit
@@ -130,7 +134,7 @@ class ContentArticleWidget extends Widget
     {
         $arrTables = [];
         $objTables = \Database::getInstance()
-            ->execute('
+                              ->execute('
 				SELECT tableName, d.renderType, d.ptable
 				FROM tl_metamodel AS m
 				JOIN tl_metamodel_dca AS d
