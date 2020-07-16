@@ -21,6 +21,7 @@
 
 namespace MetaModels\AttributeContentArticleBundle\Widgets;
 
+use Contao\Input;
 use Contao\Widget;
 
 /**
@@ -53,6 +54,24 @@ class ContentArticleWidget extends Widget
     protected $strTemplate = 'be_widget';
 
     /**
+     * Flag if the current entry has an id.
+     *
+     * @var bool
+     */
+    protected $hasEmptyId = false;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct($arrAttributes = null)
+    {
+        $currentID        = Input::get('id');
+        $this->hasEmptyId = empty($currentID);
+
+        parent::__construct($arrAttributes);
+    }
+
+    /**
      * Generate the widget and return it as string.
      *
      * @return string Generated String.
@@ -63,6 +82,22 @@ class ContentArticleWidget extends Widget
      */
     public function generate()
     {
+        if (!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
+            $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
+        } else {
+            $edit = 'Bearbeiten';
+        }
+
+        // If we have no id, we get some trouble with the modal. So we disabled the button.
+        if ($this->hasEmptyId) {
+            return sprintf(
+                '<p class="tl_help tl_tip">%s</p><button type="button" name="%s" class="tl_submit" disabled>%s</button>',
+                $GLOBALS['TL_LANG']['attribute_contentarticle']['missing_id'],
+                $this->name,
+                $edit
+            );
+        }
+
         $strQuery = http_build_query([
             'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
             'table'  => 'tl_content',
@@ -73,12 +108,6 @@ class ContentArticleWidget extends Widget
             'nb'     => 1,
             'rt'     => REQUEST_TOKEN,
         ]);
-
-        if (!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
-            $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
-        } else {
-            $edit = 'Bearbeiten';
-        }
 
         return sprintf(
             '<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
