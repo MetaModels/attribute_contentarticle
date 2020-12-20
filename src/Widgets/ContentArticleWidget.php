@@ -21,8 +21,12 @@
 
 namespace MetaModels\AttributeContentArticleBundle\Widgets;
 
+use Contao\CoreBundle\Framework\Adapter;
 use Contao\Input;
+use Contao\System;
 use Contao\Widget;
+use Doctrine\DBAL\Connection;
+use Twig\Environment;
 
 /**
  * Class ContentArticleWidget
@@ -61,17 +65,39 @@ class ContentArticleWidget extends Widget
     protected $hasEmptyId = false;
 
     /**
+     * The database connection.
+     *
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $connection;
+
+    /**
+     * The contao input.
+     *
+     * @var \Contao\CoreBundle\Framework\Adapter|Input
+     */
+    private $input;
+
+    /**
      * Check if we have an id, if not set a flag.
      * After this check call the parent constructor.
      *
      * @inheritDoc
      */
-    public function __construct($arrAttributes = null)
-    {
-        $currentID        = Input::get('id');
-        $this->hasEmptyId = empty($currentID);
+    public function __construct(
+        $arrAttributes = null,
+        Connection $connection = null,
+        Adapter $input = null
+    ) {
+        $this->connection = ($connection ?? System::getContainer()->get('database_connection'));
+        $this->input      = (
+            $input ?? System::getContainer()->get('@=service("contao.framework").getAdapter("Contao\\Input")')
+        );
 
         parent::__construct($arrAttributes);
+
+        $currentID        = $this->input->get('id');
+        $this->hasEmptyId = empty($currentID);
     }
 
     /**
@@ -88,7 +114,7 @@ class ContentArticleWidget extends Widget
         if (!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
             $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
         } else {
-            $edit = 'Bearbeiten';
+            $edit = 'Edit';
         }
 
         // If we have no id, we get some trouble with the modal. So we disabled the button.
@@ -103,7 +129,7 @@ class ContentArticleWidget extends Widget
         }
 
         $strQuery = http_build_query([
-            'do'     => 'metamodel_' . $this->getRootMetaModelTable($this->strTable) ?: 'table_not_found',
+            'do'     => 'metamodel_' . ($this->getRootMetaModelTable($this->strTable) ?: 'table_not_found'),
             'table'  => 'tl_content',
             'ptable' => $this->strTable,
             'id'     => $this->currentRecord,
@@ -133,13 +159,12 @@ class ContentArticleWidget extends Widget
     private function getRootMetaModelTable($strTable)
     {
         $arrTables = [];
-        $objTables = \Database::getInstance()
-                              ->execute('
-				SELECT tableName, d.renderType, d.ptable
-				FROM tl_metamodel AS m
-				JOIN tl_metamodel_dca AS d
-				ON m.id = d.pid
-			');
+        $objTables = \Database::getInstance()->execute('
+                SELECT tableName, d.renderType, d.ptable
+                FROM tl_metamodel AS m
+                JOIN tl_metamodel_dca AS d
+                ON m.id = d.pid
+        ');
 
         while ($objTables->next()) {
             $arrTables[$objTables->tableName] = [

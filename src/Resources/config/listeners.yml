@@ -1,6 +1,6 @@
 services:
-  metamodels.attribute_contentarticle.listeners.backend_listener:
-    class: MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener
+  MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
+    public: false
     tags:
       -
         name: kernel.event_listener
@@ -10,8 +10,8 @@ services:
         name: kernel.event_listener
         event: 'dc-general.model.post-paste'
         method: 'handlePostPasteModel'
-  metamodels.attribute_contentarticle.backend_listner.get_options:
-    class: MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener
+  MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener:
+    public: false
     arguments:
       - '@metamodels.factory'
     tags:
@@ -19,8 +19,8 @@ services:
         name: kernel.event_listener
         event: 'men-at-work.multi-column-wizard.get-options'
         method: getOptions
-  metamodels.attribute_contentarticle.backend_listner.auth.listener:
-    class: MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener
+  MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener:
+    public: false
     arguments:
       - "@security.token_storage"
       - "@security.authentication.trust_resolver"
