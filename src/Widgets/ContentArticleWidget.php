@@ -25,6 +25,7 @@ use Contao\CoreBundle\Framework\Adapter;
 use Contao\Input;
 use Contao\System;
 use Contao\Widget;
+use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use Doctrine\DBAL\Connection;
 use Twig\Environment;
 
@@ -86,12 +87,13 @@ class ContentArticleWidget extends Widget
      */
     public function __construct(
         $arrAttributes = null,
+        DcCompat $dcCompat = null,
         Connection $connection = null,
         Adapter $input = null
     ) {
         $this->connection = ($connection ?? System::getContainer()->get('database_connection'));
         $this->input      = (
-            $input ?? System::getContainer()->get('@=service("contao.framework").getAdapter("Contao\\Input")')
+            $input ?? System::getContainer()->get('contao.framework')->getAdapter(Input::class)
         );
 
         parent::__construct($arrAttributes);
