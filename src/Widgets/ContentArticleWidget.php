@@ -87,7 +87,7 @@ class ContentArticleWidget extends Widget
      */
     public function __construct(
         $arrAttributes = null,
-        DcCompat $dcCompat,
+        DcCompat $dcCompat = null,
         Connection $connection = null,
         Adapter $input = null
     ) {
