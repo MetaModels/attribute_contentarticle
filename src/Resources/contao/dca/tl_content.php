@@ -19,21 +19,27 @@
  * @filesource
  */
 
+use Contao\Input;
 use MetaModels\AttributeContentArticleBundle\Table\ArticleContent;
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['mm_slot'] = [
     'sql' => "varchar(255) NOT NULL default ''",
 ];
 
-$strModule = \Input::get('do');
-$strTable  = \Input::get('table');
+$strModule      = Input::get('do');
+$strTable       = Input::get('table');
+$strLangSupport = Input::get('langSupport');
 
 // Change TL_Content for the article popup
-if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
+if (
+    \substr($strModule, 0, 10) == 'metamodel_'
+    && $strTable == 'tl_content'
+    && $strLangSupport === null
+) {
     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']                         =
         'TableMetaModelsContentArticle';
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable']                                =
-        \Input::get('ptable');
+        Input::get('ptable');
     $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][]                   =
         [
             ArticleContent::class,
@@ -52,6 +58,6 @@ if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]                     =
         [
             'mm_slot=?',
-            \Input::get('slot')
+            Input::get('slot')
         ];
 }

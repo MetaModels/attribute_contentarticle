@@ -27,7 +27,6 @@ use Contao\System;
 use Contao\Widget;
 use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use Doctrine\DBAL\Connection;
-use Twig\Environment;
 
 /**
  * Class ContentArticleWidget

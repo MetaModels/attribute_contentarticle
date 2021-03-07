@@ -91,10 +91,15 @@ class InitializeListener
      */
     public function addBackendModules(&$localMenu)
     {
-        $strModule = Input::get('do');
-        $strTable  = Input::get('table');
+        $strModule      = Input::get('do');
+        $strTable       = Input::get('table');
+        $blnLangSupport = Input::get('langSupport');
 
-        if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content') {
+        if (
+            substr($strModule, 0, 10) == 'metamodel_'
+            && $strTable == 'tl_content'
+            && $blnLangSupport === null
+        ) {
             $needsToBeAdded = true;
             foreach ($GLOBALS['BE_MOD'] as $key => $mod) {
                 if (isset($mod[$strModule])) {
