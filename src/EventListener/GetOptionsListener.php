@@ -23,7 +23,7 @@
 namespace MetaModels\AttributeContentArticleBundle\EventListener;
 
 use MetaModels\IFactory;
-use MultiColumnWizard\Event\GetOptionsEvent;
+use \MenAtWork\MultiColumnWizardBundle\Event\GetOptionsEvent;
 
 /**
  * Handle events for tl_metamodel_attribute.

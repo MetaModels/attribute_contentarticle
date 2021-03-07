@@ -51,6 +51,5 @@ class MetaModelsAttributeContentArticleExtensionTest extends TestCase
         {
             self::assertTrue($container->hasDefinition($expectedDefinition));
         }
-
     }
 }
