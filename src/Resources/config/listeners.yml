@@ -2,12 +2,10 @@ services:
   MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
     public: false
     tags:
-      -
-        name: kernel.event_listener
+      - name: kernel.event_listener
         event: 'dc-general.model.post-duplicate'
         method: 'handlePostDuplicationModel'
-      -
-        name: kernel.event_listener
+      - name: kernel.event_listener
         event: 'dc-general.model.post-paste'
         method: 'handlePostPasteModel'
   MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener:
@@ -15,8 +13,7 @@ services:
     arguments:
       - '@metamodels.factory'
     tags:
-      -
-        name: kernel.event_listener
+      - name: kernel.event_listener
         event: 'men-at-work.multi-column-wizard.get-options'
         method: getOptions
   MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener:
@@ -27,7 +24,6 @@ services:
       - "@contao.routing.scope_matcher"
       - "@metamodels.view_combination"
     tags:
-      -
-        name: kernel.event_listener
+      - name: kernel.event_listener
         event: kernel.request
-        priority: -6000
+        priority: -600
