@@ -5,7 +5,8 @@
     "contao",
     "metamodels",
     "attribute",
-    "article"
+    "article",
+    "content element"
   ],
   "type": "contao-bundle",
   "homepage": "http://now.metamodel.me/",
@@ -30,7 +31,7 @@
     "contao-community-alliance/dc-general": "^2.1.3",
     "contao/core-bundle": "^4.4.8",
     "metamodels/core": "^2.1.1",
-    "symfony/dependency-injection": "^3.3 || ^4.0",
+    "symfony/dependency-injection": "^3.3 || ^4.1.12",
     "symfony/http-kernel": "^3.3 || ^4.0",
     "ext-pdo": "*"
   },
