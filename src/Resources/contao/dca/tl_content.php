@@ -36,8 +36,6 @@ if (
     && $strTable == 'tl_content'
     && $strLangSupport === null
 ) {
-    $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']                         =
-        'TableMetaModelsContentArticle';
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable']                                =
         Input::get('ptable');
     $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][]                   =
