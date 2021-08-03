@@ -43,6 +43,16 @@ if (
             ArticleContent::class,
             'save'
         ];
+    $GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][]                     =
+        [
+            ArticleContent::class,
+            'updateCopyAndCutData'
+        ];
+    $GLOBALS['TL_DCA']['tl_content']['config']['oncut_callback'][]                      =
+        [
+            ArticleContent::class,
+            'updateCopyAndCutData'
+        ];
     $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][]                     =
         [
             ArticleContent::class,
