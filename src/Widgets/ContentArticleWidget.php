@@ -134,6 +134,7 @@ class ContentArticleWidget extends Widget
             'table'  => 'tl_content',
             'ptable' => $this->strTable,
             'id'     => $this->currentRecord,
+            'mid'    => $this->currentRecord,
             'slot'   => $this->strName,
             'popup'  => 1,
             'nb'     => 1,

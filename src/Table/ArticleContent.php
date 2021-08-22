@@ -73,11 +73,49 @@ class ArticleContent
      *
      * @return void
      */
-    public function updateCopyAndCutData(string $insertId, DataContainer $dataContainer)
+    public function updateCopyData(string $insertId, DataContainer $dataContainer)
     {
-        $pid    = Input::get('id');
+        $pid    = Input::get('mid');
         $ptable = Input::get('ptable');
         $slot   = Input::get('slot');
+
+        if (empty($pid) || empty($ptable) || empty($slot)) {
+            $errorCode = 'Could not update row because one of the data are missing. ';
+            $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
+            throw new \RuntimeException(
+                \sprintf(
+                    $errorCode,
+                    $insertId,
+                    $pid,
+                    $ptable,
+                    $slot
+                )
+            );
+        }
+
+        Database::getInstance()
+                ->prepare('UPDATE tl_content SET pid=?, ptable=?, mm_slot=? WHERE id=?')
+                ->execute(
+                    $pid,
+                    $ptable,
+                    $slot,
+                    $insertId
+                );
+    }
+
+    /**
+     * Update the data from copies and set the context like pid, parent table, slot.
+     *
+     * @param DataContainer $dataContainer The DC Driver.
+     *
+     * @return void
+     */
+    public function updateCutData(DataContainer $dataContainer)
+    {
+        $pid      = Input::get('mid');
+        $ptable   = Input::get('ptable');
+        $slot     = Input::get('slot');
+        $insertId = $dataContainer->id;
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
             $errorCode = 'Could not update row because one of the data are missing. ';

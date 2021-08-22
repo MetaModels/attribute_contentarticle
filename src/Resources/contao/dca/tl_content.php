@@ -43,20 +43,20 @@ if (
             ArticleContent::class,
             'save'
         ];
-    $GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][]                     =
-        [
-            ArticleContent::class,
-            'updateCopyAndCutData'
-        ];
-    $GLOBALS['TL_DCA']['tl_content']['config']['oncut_callback'][]                      =
-        [
-            ArticleContent::class,
-            'updateCopyAndCutData'
-        ];
     $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][]                     =
         [
             ArticleContent::class,
             'checkPermission'
+        ];
+    $GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][]                     =
+        [
+            ArticleContent::class,
+            'updateCopyData'
+        ];
+    $GLOBALS['TL_DCA']['tl_content']['config']['oncut_callback'][]                      =
+        [
+            ArticleContent::class,
+            'updateCutData'
         ];
     $GLOBALS['TL_DCA']['tl_content']['list']['operations']['toggle']['button_callback'] =
         [
