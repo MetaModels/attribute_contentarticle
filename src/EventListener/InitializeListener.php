@@ -39,8 +39,11 @@ class InitializeListener
      * Constructor.
      *
      * @param TokenStorageInterface                $tokenStorage                The token storage.
+     *
      * @param AuthenticationTrustResolverInterface $authenticationTrustResolver The authentication resolver.
+     *
      * @param ScopeMatcher                         $scopeMatcher                The scope matche.
+     *
      * @param ViewCombination                      $viewCombination             The view combination.
      */
     public function __construct(
@@ -95,11 +98,7 @@ class InitializeListener
         $strTable       = Input::get('table');
         $blnLangSupport = Input::get('langSupport');
 
-        if (
-            substr($strModule, 0, 10) == 'metamodel_'
-            && $strTable == 'tl_content'
-            && $blnLangSupport === null
-        ) {
+        if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content' && $blnLangSupport === null) {
             $needsToBeAdded = true;
             foreach ($GLOBALS['BE_MOD'] as $key => $mod) {
                 if (isset($mod[$strModule])) {
