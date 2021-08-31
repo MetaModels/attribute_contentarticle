@@ -31,11 +31,7 @@ $strTable       = Input::get('table');
 $strLangSupport = Input::get('langSupport');
 
 // Change TL_Content for the article popup
-if (
-    \substr($strModule, 0, 10) == 'metamodel_'
-    && $strTable == 'tl_content'
-    && $strLangSupport === null
-) {
+if (\substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content' && $strLangSupport === null) {
     $GLOBALS['TL_DCA']['tl_content']['config']['ptable']                                =
         Input::get('ptable');
     $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][]                   =

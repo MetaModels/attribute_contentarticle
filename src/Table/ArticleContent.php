@@ -72,6 +72,10 @@ class ArticleContent
      * @param DataContainer $dataContainer The DC Driver.
      *
      * @return void
+     *
+     * @throws \RuntimeException If the id is missing for the entry.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function updateCopyData(string $insertId, DataContainer $dataContainer)
     {
@@ -80,7 +84,7 @@ class ArticleContent
         $slot   = Input::get('slot');
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
-            $errorCode = 'Could not update row because one of the data are missing. ';
+            $errorCode  = 'Could not update row because one of the data are missing. ';
             $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
             throw new \RuntimeException(
                 \sprintf(
@@ -109,6 +113,8 @@ class ArticleContent
      * @param DataContainer $dataContainer The DC Driver.
      *
      * @return void
+     *
+     * @throws \RuntimeException If the id is missing for the entry.
      */
     public function updateCutData(DataContainer $dataContainer)
     {
@@ -118,7 +124,7 @@ class ArticleContent
         $insertId = $dataContainer->id;
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
-            $errorCode = 'Could not update row because one of the data are missing. ';
+            $errorCode  = 'Could not update row because one of the data are missing. ';
             $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
             throw new \RuntimeException(
                 \sprintf(
