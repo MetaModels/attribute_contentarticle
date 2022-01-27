@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2019 The MetaModels team.
+ * (c) 2012-2022 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,7 +14,8 @@
  * @subpackage AttributeContentArticle
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
- * @copyright  2012-2019 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -22,20 +23,23 @@
 namespace MetaModels\AttributeContentArticleBundle\Widgets;
 
 use Contao\CoreBundle\Framework\Adapter;
+use Contao\Environment;
 use Contao\Input;
 use Contao\System;
 use Contao\Widget;
 use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
+use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\ContaoBackendViewTemplate;
+use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Widget\AbstractWidget;
 use Doctrine\DBAL\Connection;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ContentArticleWidget
  *
  * @package MetaModels\AttributeContentArticleBundle\Widgets
  */
-class ContentArticleWidget extends Widget
+class ContentArticleWidget extends AbstractWidget
 {
-
     /**
      * Submit user input.
      *
@@ -55,7 +59,7 @@ class ContentArticleWidget extends Widget
      *
      * @var string
      */
-    protected $strTemplate = 'be_widget';
+    protected $subTemplate = 'widget_contentarticle';
 
     /**
      * Flag if the current entry has an id.
@@ -90,15 +94,87 @@ class ContentArticleWidget extends Widget
         Connection $connection = null,
         Adapter $input = null
     ) {
-        $this->connection = ($connection ?? System::getContainer()->get('database_connection'));
-        $this->input      = (
-            $input ?? System::getContainer()->get('contao.framework')->getAdapter(Input::class)
-        );
+        if (null === $connection) {
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'Connection is missing. It has to be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $connection = System::getContainer()->get('database_connection');
+        }
+        $this->connection = $connection;
 
-        parent::__construct($arrAttributes);
+        if (null === $input) {
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'Input adapter is missing. It has to be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $input = System::getContainer()->get('contao.framework')->getAdapter(Input::class);
+        }
+        $this->input = $input;
+
+        parent::__construct($arrAttributes, $dcCompat);
 
         $currentID        = $this->input->get('id');
         $this->hasEmptyId = empty($currentID);
+    }
+
+    /**
+     * Set an object property
+     *
+     * @param string $strKey   The property name.
+     * @param mixed  $varValue The property value.
+     *
+     * @return void
+     */
+    public function __set($strKey, $varValue)
+    {
+        switch ($strKey) {
+            case 'subTemplate':
+                $this->subTemplate = $varValue;
+                break;
+            default:
+                parent::__set($strKey, $varValue);
+                break;
+        }
+    }
+
+    /**
+     * Return an object property
+     *
+     * @param string $strKey The property name.
+     *
+     * @return string The property value
+     */
+    public function __get($strKey)
+    {
+        switch ($strKey) {
+            case 'subTemplate':
+                return $this->subTemplate;
+            default:
+        }
+
+        return parent::__get($strKey);
+    }
+
+    /**
+     * Check whether an object property exists
+     *
+     * @param string $strKey The property name.
+     *
+     * @return boolean True if the property exists
+     */
+    public function __isset($strKey)
+    {
+        switch ($strKey) {
+            case 'subTemplate':
+                return isset($this->subTemplate);
+            default:
+                return parent::__get($strKey);
+        }
     }
 
     /**
@@ -112,41 +188,41 @@ class ContentArticleWidget extends Widget
      */
     public function generate()
     {
-        if (!empty($GLOBALS['TL_LANG']['MSC']['edit'])) {
-            $edit = $GLOBALS['TL_LANG']['MSC']['edit'];
-        } else {
-            $edit = 'Edit';
-        }
-
-        // If we have no id, we get some trouble with the modal. So we disabled the button.
-        if ($this->hasEmptyId) {
-            return sprintf(
-                '<p class="tl_help tl_tip">%s</p>' .
-                '<button type="button" name="%s" class="tl_submit" disabled>%s</button>',
-                $GLOBALS['TL_LANG']['attribute_contentarticle']['missing_id'],
-                $this->name,
-                $edit
-            );
-        }
+        $rootTable = $this->getRootMetaModelTable($this->strTable);
 
         $strQuery = http_build_query([
-            'do'     => 'metamodel_' . ($this->getRootMetaModelTable($this->strTable) ?: 'table_not_found'),
-            'table'  => 'tl_content',
-            'ptable' => $this->strTable,
-            'id'     => $this->currentRecord,
-            'mid'    => $this->currentRecord,
-            'slot'   => $this->strName,
-            'popup'  => 1,
-            'nb'     => 1,
-            'rt'     => REQUEST_TOKEN,
-        ]);
+                                         'do'     => 'metamodel_' . ($rootTable ?: 'table_not_found'),
+                                         'table'  => 'tl_content',
+                                         'ptable' => $this->strTable,
+                                         'id'     => $this->currentRecord,
+                                         'mid'    => $this->currentRecord,
+                                         'slot'   => $this->strName,
+                                         'popup'  => 1,
+                                         'nb'     => 1,
+                                         'rt'     => REQUEST_TOKEN,
+                                     ]);
 
-        return sprintf(
-            '<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
-            'contao?' . $strQuery,
-            'Backend.openModalIframe({width:850,title:\'' . $this->strLabel . '\',url:this.href});return false',
-            $edit
-        );
+        $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable);
+
+        $content = (new ContaoBackendViewTemplate($this->subTemplate))
+            ->setTranslator($this->getEnvironment()->getTranslator())
+            ->set('name', $this->strName)
+            ->set('id', $this->strId)
+            ->set('label', $this->label)
+            ->set('readonly', $this->readonly)
+            ->set('hasEmptyId', $this->hasEmptyId)
+            ->set('link', 'contao?' . $strQuery)
+            ->set('elements', $contentElements)
+            ->parse();
+        dump($this->currentRecord);
+//        return sprintf(
+//            '<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
+//            'contao?' . $strQuery,
+//            'Backend.openModalIframe({width:850,title:\'' . $this->strLabel . '\',url:this.href});return false',
+//            $edit
+//        );
+
+        return !Environment::get('isAjaxRequest') ? '<div>' . $content . '</div>' : $content;
     }
 
     /**
@@ -161,12 +237,14 @@ class ContentArticleWidget extends Widget
     private function getRootMetaModelTable($strTable)
     {
         $arrTables = [];
-        $objTables = \Database::getInstance()->execute('
+        $objTables = \Database::getInstance()->execute(
+            '
                 SELECT tableName, d.renderType, d.ptable
                 FROM tl_metamodel AS m
                 JOIN tl_metamodel_dca AS d
                 ON m.id = d.pid
-        ');
+        '
+        );
 
         while ($objTables->next()) {
             $arrTables[$objTables->tableName] = [
@@ -195,5 +273,39 @@ class ContentArticleWidget extends Widget
         };
 
         return $getTable($strTable);
+    }
+
+    /**
+     * in DB
+     * pid    = $this->currentRecord
+     * ptable = $this->getRootMetaModelTable($this->strTable)
+     *
+     * $GLOBALS['TL_LANG']['CTE']['metamodel_content']['0'] Bezeichnung
+     */
+    private function getContentTypesByRecordId($recordId, $ptableName)
+    {
+        $contentElements = [];
+
+        if (empty($recordId) || empty($ptableName)) {
+            return $contentElements;
+        }
+
+        $query    = sprintf(
+            '
+                SELECT cte.type
+                FROM tl_content AS cte
+                WHERE cte.pid = \'%s\' AND cte.ptable = \'%s\'
+                ORDER BY cte.sorting
+        ',
+            $recordId,
+            $ptableName
+        );
+        $elements = \Database::getInstance()->execute($query);
+
+        while ($elements->next()) {
+            $contentElements[] = $this->getEnvironment()->getTranslator()->translate($elements->type . '.0', 'CTE');
+        }
+
+        return $contentElements;
     }
 }
