@@ -214,7 +214,7 @@ class ContentArticleWidget extends AbstractWidget
             ->set('link', 'contao?' . $strQuery)
             ->set('elements', $contentElements)
             ->parse();
-        dump($this->currentRecord);
+
 //        return sprintf(
 //            '<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
 //            'contao?' . $strQuery,
@@ -292,7 +292,7 @@ class ContentArticleWidget extends AbstractWidget
 
         $query    = sprintf(
             '
-                SELECT cte.type
+                SELECT cte.type, cte.invisible, cte.start, cte.stop
                 FROM tl_content AS cte
                 WHERE cte.pid = \'%s\' AND cte.ptable = \'%s\'
                 ORDER BY cte.sorting
@@ -303,7 +303,12 @@ class ContentArticleWidget extends AbstractWidget
         $elements = \Database::getInstance()->execute($query);
 
         while ($elements->next()) {
-            $contentElements[] = $this->getEnvironment()->getTranslator()->translate($elements->type . '.0', 'CTE');
+            $contentElements[] = [
+                'name'      => $this->getEnvironment()->getTranslator()->translate($elements->type . '.0', 'CTE'),
+                'isInvisible' => $elements->invisible
+                               || ($elements->start && $elements->start > time())
+                               || ($elements->stop && $elements->stop <= time())
+            ];
         }
 
         return $contentElements;

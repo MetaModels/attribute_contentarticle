@@ -7,7 +7,7 @@
             <ul>
                 <?php foreach ((array) $this->elements as $element): ?>
                 <li>
-                    <div class="cte_type published"><?= $element ?></div>
+                    <div class="cte_type<?= $element['isInvisible'] ? ' unpublished': ' published' ?>"><?= $element['name'] ?></div>
                 </li>
                 <?php endforeach; ?>
             </ul>
