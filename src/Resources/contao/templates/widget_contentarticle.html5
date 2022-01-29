@@ -4,7 +4,7 @@
 <?php else: ?>
     <div>
         <div class="selector_container">
-            <ul>
+            <ul class="elements_container">
                 <?php foreach ((array) $this->elements as $element): ?>
                 <li>
                     <div class="cte_type<?= $element['isInvisible'] ? ' unpublished': ' published' ?>"><?= $element['name'] ?></div>

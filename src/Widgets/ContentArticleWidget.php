@@ -182,7 +182,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @return string Generated String.
      *
-     * @throws \Exception Throws Exceptions.
+     * @throws \Exception|\Doctrine\DBAL\Driver\Exception Throws Exceptions.
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
@@ -228,41 +228,40 @@ class ContentArticleWidget extends AbstractWidget
     /**
      * Get the RootMetaModelTable.
      *
-     * @param string $strTable Table name to Check.
+     * @param string $tableName Table name to check.
      *
      * @return bool|string Returns RootMetaModelTable.
      *
      * @throws \Exception Throws an Exception.
      */
-    private function getRootMetaModelTable($strTable)
+    private function getRootMetaModelTable($tableName):
     {
-        $arrTables = [];
-        $objTables = \Database::getInstance()->execute(
-            '
-                SELECT tableName, d.renderType, d.ptable
-                FROM tl_metamodel AS m
-                JOIN tl_metamodel_dca AS d
-                ON m.id = d.pid
-        '
-        );
+        $tables = [];
 
-        while ($objTables->next()) {
-            $arrTables[$objTables->tableName] = [
-                'renderType' => $objTables->renderType,
-                'ptable'     => $objTables->ptable,
+        $statement = $this->connection
+            ->createQueryBuilder()
+            ->select('t.tableName, d.renderType, d.ptable')
+            ->from('tl_metamodel', 't')
+            ->leftJoin('t', 'tl_metamodel_dca', 'd', '(t.id=d.pid)')
+            ->execute();
+
+        while ($row = $statement->fetchAssociative()) {
+            $tables[$row['tableName']] = [
+                'renderType' => $row['renderType'],
+                'ptable'     => $row['ptable'],
             ];
         }
 
-        $getTable = function ($strTable) use (&$getTable, $arrTables) {
-            if (!isset($arrTables[$strTable])) {
+        $getTable = function ($tableName) use (&$getTable, $tables) {
+            if (!isset($tables[$tableName])) {
                 return false;
             }
 
-            $arrTable = $arrTables[$strTable];
+            $arrTable = $tables[$tableName];
 
             switch ($arrTable['renderType']) {
                 case 'standalone':
-                    return $strTable;
+                    return $tableName;
 
                 case 'ctable':
                     return $getTable($arrTable['ptable']);
@@ -272,17 +271,21 @@ class ContentArticleWidget extends AbstractWidget
             }
         };
 
-        return $getTable($strTable);
+        return $getTable($tableName);
     }
 
     /**
-     * in DB
-     * pid    = $this->currentRecord
-     * ptable = $this->getRootMetaModelTable($this->strTable)
+     * Retrieve all content elements of this item as parent.
      *
-     * $GLOBALS['TL_LANG']['CTE']['metamodel_content']['0'] Bezeichnung
+     * @param int    $recordId   The record id.
+     * @param string $ptableName The name of parent table.
+     *
+     * @return array Returns array with content elements.
+     *
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
      */
-    private function getContentTypesByRecordId($recordId, $ptableName)
+    private function getContentTypesByRecordId($recordId, $ptableName): array
     {
         $contentElements = [];
 
@@ -290,24 +293,23 @@ class ContentArticleWidget extends AbstractWidget
             return $contentElements;
         }
 
-        $query    = sprintf(
-            '
-                SELECT cte.type, cte.invisible, cte.start, cte.stop
-                FROM tl_content AS cte
-                WHERE cte.pid = \'%s\' AND cte.ptable = \'%s\'
-                ORDER BY cte.sorting
-        ',
-            $recordId,
-            $ptableName
-        );
-        $elements = \Database::getInstance()->execute($query);
+        $statement = $this->connection
+            ->createQueryBuilder()
+            ->select('t.type, t.invisible, t.start, t.stop')
+            ->from('tl_content', 't')
+            ->where('t.pid=:pid')
+            ->andWhere('t.ptable=:ptable')
+            ->orderBy('t.sorting')
+            ->setParameter('pid', $recordId)
+            ->setParameter('ptable', $ptableName)
+            ->execute();
 
-        while ($elements->next()) {
+        while ($row = $statement->fetchAssociative()) {
             $contentElements[] = [
-                'name'      => $this->getEnvironment()->getTranslator()->translate($elements->type . '.0', 'CTE'),
-                'isInvisible' => $elements->invisible
-                               || ($elements->start && $elements->start > time())
-                               || ($elements->stop && $elements->stop <= time())
+                'name'        => $this->getEnvironment()->getTranslator()->translate($row['type'] . '.0', 'CTE'),
+                'isInvisible' => $row['invisible']
+                                 || ($row['start'] && $row['start'] > time())
+                                 || ($row['stop'] && $row['stop'] <= time())
             ];
         }
 
