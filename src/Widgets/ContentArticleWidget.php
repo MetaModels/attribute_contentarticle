@@ -234,7 +234,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @throws \Exception Throws an Exception.
      */
-    private function getRootMetaModelTable($tableName):
+    private function getRootMetaModelTable($tableName)
     {
         $tables = [];
 
