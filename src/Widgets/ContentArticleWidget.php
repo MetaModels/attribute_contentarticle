@@ -213,13 +213,6 @@ class ContentArticleWidget extends AbstractWidget
             ->set('elements', $contentElements)
             ->parse();
 
-//        return sprintf(
-//            '<div><p><a href="%s" class="tl_submit" onclick="%s">%s</a></p></div>',
-//            'contao?' . $strQuery,
-//            'Backend.openModalIframe({width:850,title:\'' . $this->strLabel . '\',url:this.href});return false',
-//            $edit
-//        );
-
         return !Environment::get('isAjaxRequest') ? '<div>' . $content . '</div>' : $content;
     }
 
