@@ -290,9 +290,11 @@ class ContentArticleWidget extends AbstractWidget
             ->from('tl_content', 't')
             ->where('t.pid=:pid')
             ->andWhere('t.ptable=:ptable')
+            ->andWhere('t.mm_slot=:slot')
             ->orderBy('t.sorting')
             ->setParameter('pid', $recordId)
             ->setParameter('ptable', $ptableName)
+            ->setParameter('slot', $this->name)
             ->execute();
 
         while ($row = $statement->fetchAssociative()) {
