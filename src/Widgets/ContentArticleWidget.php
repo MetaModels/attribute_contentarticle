@@ -223,9 +223,9 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @return bool|string Returns RootMetaModelTable.
      *
-     * @throws \Exception Throws an Exception.
+     * @throws \Exception|\Doctrine\DBAL\Driver\Exception Throws an Exception.
      */
-    private function getRootMetaModelTable($tableName)
+    private function getRootMetaModelTable(string $tableName)
     {
         $tables = [];
 
