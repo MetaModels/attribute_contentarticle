@@ -268,15 +268,15 @@ class ContentArticleWidget extends AbstractWidget
     /**
      * Retrieve all content elements of this item as parent.
      *
-     * @param int    $recordId   The record id.
-     * @param string $ptableName The name of parent table.
+     * @param int|null $recordId   The record id.
+     * @param string   $ptableName The name of parent table.
      *
      * @return array Returns array with content elements.
      *
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    private function getContentTypesByRecordId(int $recordId, string $ptableName): array
+    public function getContentTypesByRecordId(?int $recordId, string $ptableName): array
     {
         $contentElements = [];
 
