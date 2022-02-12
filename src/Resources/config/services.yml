@@ -1,7 +1,6 @@
 services:
     MetaModels\AttributeContentArticleBundle\Attribute\AttributeTypeFactory:
         arguments:
-            - '@event_dispatcher'
             - '@database_connection'
             - '@metamodels.table_manipulator'
         tags:

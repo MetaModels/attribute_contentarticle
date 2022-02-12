@@ -276,7 +276,7 @@ class ContentArticleWidget extends AbstractWidget
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getContentTypesByRecordId(?int $recordId, string $ptableName): array
+    private function getContentTypesByRecordId(?int $recordId, string $ptableName): array
     {
         $contentElements = [];
 
