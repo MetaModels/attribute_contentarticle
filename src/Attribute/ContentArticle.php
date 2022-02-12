@@ -93,6 +93,7 @@ class ContentArticle extends BaseComplex
         $arrData        = [];
         $contentArticle = new ContentArticleWidget();
         $rootTable      = $contentArticle->getRootMetaModelTable($strTable);
+
         foreach ($arrIds as $intId) {
             // Continue if it's a recursive call
             $strCallId = $strTable . '_' . $strColumn . '_' . $intId;
@@ -105,17 +106,25 @@ class ContentArticle extends BaseComplex
             // Generate list for backend.
             if (TL_MODE == 'BE') {
                 $elements = $contentArticle->getContentTypesByRecordId($intId, $rootTable, $strColumn);
-                $content    = '<ul class="elements_container">';
-                foreach ((array) $elements as $element) {
-                    $content .= sprintf(
-                        '<li><div class="cte_type%s"><img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
-                        $element['isInvisible'] ? ' unpublished' : ' published',
-                        $element['isInvisible'] ? 'unpublished' : 'published',
-                        $element['name']
-                    );
+                $content  = '';
+                if(count($elements)) {
+                    $content .= '<ul class="elements_container">';
+                    foreach ((array) $elements as $element) {
+                        $content .= sprintf(
+                            '<li><div class="cte_type%s"><img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
+                            $element['isInvisible'] ? ' unpublished' : ' published',
+                            $element['isInvisible'] ? 'unpublished' : 'published',
+                            $element['name']
+                        );
+                    }
+                    $content .= '</ul>';
                 }
-                $content .= '</ul>';
-                $arrContent[] = $content;
+
+                if (!empty($content)) {
+                    $arrData[$intId]['value'] = [$content];
+                } else {
+                    $arrData[$intId]['value'] = [];
+                }
             }
 
             // Generate output for frontend.
@@ -130,17 +139,17 @@ class ContentArticle extends BaseComplex
                         }
                     }
                 }
-            }
 
-            if (!empty($arrContent)) {
-                $arrData[$intId]['value'] = $arrContent;
-            } else {
-                $arrData[$intId]['value'] = [];
+                if (!empty($arrContent)) {
+                    $arrData[$intId]['value'] = $arrContent;
+                } else {
+                    $arrData[$intId]['value'] = [];
+                }
             }
 
             unset(static::$arrCallIds[$strCallId]);
         }
-dump($arrData);
+
         return $arrData;
     }
 }
