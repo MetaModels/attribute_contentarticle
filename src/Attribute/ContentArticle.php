@@ -25,6 +25,7 @@
 namespace MetaModels\AttributeContentArticleBundle\Attribute;
 
 use MetaModels\Attribute\BaseComplex;
+use MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget;
 
 /**
  * This is the AttributeContentArticle class for handling article fields.
@@ -87,15 +88,11 @@ class ContentArticle extends BaseComplex
      */
     public function getDataFor($arrIds): array
     {
-        // Generate only for frontend (speeds up the backend a little)
-        if (TL_MODE == 'BE') {
-            return [];
-        }
-
-        $strTable  = $this->getMetaModel()->getTableName();
-        $strColumn = $this->getColName();
-        $arrData   = [];
-
+        $strTable       = $this->getMetaModel()->getTableName();
+        $strColumn      = $this->getColName();
+        $arrData        = [];
+        $contentArticle = new ContentArticleWidget();
+        $rootTable      = $contentArticle->getRootMetaModelTable($strTable);
         foreach ($arrIds as $intId) {
             // Continue if it's a recursive call
             $strCallId = $strTable . '_' . $strColumn . '_' . $intId;
@@ -105,13 +102,32 @@ class ContentArticle extends BaseComplex
             }
             static::$arrCallIds[$strCallId] = true;
 
-            $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
-            $arrContent = [];
+            // Generate list for backend.
+            if (TL_MODE == 'BE') {
+                $elements = $contentArticle->getContentTypesByRecordId($intId, $rootTable, $strColumn);
+                $content    = '<ul class="elements_container">';
+                foreach ((array) $elements as $element) {
+                    $content .= sprintf(
+                        '<li><div class="cte_type%s"><img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
+                        $element['isInvisible'] ? ' unpublished' : ' published',
+                        $element['isInvisible'] ? 'unpublished' : 'published',
+                        $element['name']
+                    );
+                }
+                $content .= '</ul>';
+                $arrContent[] = $content;
+            }
 
-            if ($objContent !== null) {
-                while ($objContent->next()) {
-                    if ($objContent->mm_slot == $strColumn) {
-                        $arrContent[] = \Controller::getContentElement($objContent->current());
+            // Generate output for frontend.
+            if (TL_MODE == 'FE') {
+                $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
+                $arrContent = [];
+
+                if ($objContent !== null) {
+                    while ($objContent->next()) {
+                        if ($objContent->mm_slot == $strColumn) {
+                            $arrContent[] = \Controller::getContentElement($objContent->current());
+                        }
                     }
                 }
             }
@@ -124,7 +140,7 @@ class ContentArticle extends BaseComplex
 
             unset(static::$arrCallIds[$strCallId]);
         }
-
+dump($arrData);
         return $arrData;
     }
 }

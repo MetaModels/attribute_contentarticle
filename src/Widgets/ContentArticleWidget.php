@@ -200,7 +200,7 @@ class ContentArticleWidget extends AbstractWidget
                                          'rt'     => REQUEST_TOKEN,
                                      ]);
 
-        $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable);
+        $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable, $this->strName);
 
         $content = (new ContaoBackendViewTemplate($this->subTemplate))
             ->setTranslator($this->getEnvironment()->getTranslator())
@@ -225,7 +225,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @throws \Exception|\Doctrine\DBAL\Driver\Exception Throws an Exception.
      */
-    private function getRootMetaModelTable(string $tableName)
+    public function getRootMetaModelTable(string $tableName)
     {
         $tables = [];
 
@@ -270,13 +270,14 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @param int|null $recordId   The record id.
      * @param string   $ptableName The name of parent table.
+     * @param string   $slotName   The name of slot.
      *
      * @return array Returns array with content elements.
      *
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    private function getContentTypesByRecordId(?int $recordId, string $ptableName): array
+    public function getContentTypesByRecordId(?int $recordId, string $ptableName, string $slotName): array
     {
         $contentElements = [];
 
@@ -294,12 +295,12 @@ class ContentArticleWidget extends AbstractWidget
             ->orderBy('t.sorting')
             ->setParameter('pid', $recordId)
             ->setParameter('ptable', $ptableName)
-            ->setParameter('slot', $this->name)
+            ->setParameter('slot', $slotName)
             ->execute();
 
         while ($row = $statement->fetchAssociative()) {
             $contentElements[] = [
-                'name'        => $this->getEnvironment()->getTranslator()->translate($row['type'] . '.0', 'CTE'),
+                'name'        => $row['type'], //$this->getEnvironment()->getTranslator()->translate($row['type'] . '.0', 'CTE'),
                 'isInvisible' => $row['invisible']
                                  || ($row['start'] && $row['start'] > time())
                                  || ($row['stop'] && $row['stop'] <= time())
