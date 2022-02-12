@@ -30,6 +30,7 @@ use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\ContaoBackendViewTemplate;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Widget\AbstractWidget;
 use Doctrine\DBAL\Connection;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ContentArticleWidget
@@ -78,7 +79,14 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @var \Contao\CoreBundle\Framework\Adapter|Input
      */
-    private $input;
+    private                     $input;
+
+    /**
+     * The translator interface.
+     *
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     /**
      * Check if we have an id, if not set a flag.
@@ -90,7 +98,8 @@ class ContentArticleWidget extends AbstractWidget
         $arrAttributes = null,
         DcCompat $dcCompat = null,
         Connection $connection = null,
-        Adapter $input = null
+        Adapter $input = null,
+        TranslatorInterface $translator = null
     ) {
         if (null === $connection) {
             // @codingStandardsIgnoreStart
@@ -113,6 +122,17 @@ class ContentArticleWidget extends AbstractWidget
             $input = System::getContainer()->get('contao.framework')->getAdapter(Input::class);
         }
         $this->input = $input;
+
+        if (null === $translator) {
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'Translator is missing. It has to be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $translator = System::getContainer()->get('translator');
+        }
+        $this->translator = $translator;
 
         parent::__construct($arrAttributes, $dcCompat);
 
@@ -300,7 +320,7 @@ class ContentArticleWidget extends AbstractWidget
 
         while ($row = $statement->fetchAssociative()) {
             $contentElements[] = [
-                'name'        => $row['type'], //$this->getEnvironment()->getTranslator()->translate($row['type'] . '.0', 'CTE'),
+                'name'        => $this->translator->trans('CTE.' . $row['type'] . '.0', [], 'contao_default'),
                 'isInvisible' => $row['invisible']
                                  || ($row['start'] && $row['start'] > time())
                                  || ($row['stop'] && $row['stop'] <= time())
