@@ -113,7 +113,7 @@ class ContentArticle extends BaseComplex
                         $content .= sprintf(
                             '<li><div class="cte_type%s"><img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
                             $element['isInvisible'] ? ' unpublished' : ' published',
-                            $element['isInvisible'] ? 'unpublished' : 'published',
+                            $element['isInvisible'] ? 'invisible' : 'visible',
                             $element['name']
                         );
                     }
