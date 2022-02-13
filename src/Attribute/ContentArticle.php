@@ -98,7 +98,7 @@ class ContentArticle extends BaseComplex
             // Continue if it's a recursive call
             $strCallId = $strTable . '_' . $strColumn . '_' . $intId;
             if (isset(static::$arrCallIds[$strCallId])) {
-                $arrData[$intId]['value'] = [sprintf('RECURSION: %s', $strCallId)];
+                $arrData[$intId]['value'] = [\sprintf('RECURSION: %s', $strCallId)];
                 continue;
             }
             static::$arrCallIds[$strCallId] = true;
@@ -110,7 +110,7 @@ class ContentArticle extends BaseComplex
                 if(count($elements)) {
                     $content .= '<ul class="elements_container">';
                     foreach ((array) $elements as $element) {
-                        $content .= sprintf(
+                        $content .= \sprintf(
                             '<li><div class="cte_type%s"><img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
                             $element['isInvisible'] ? ' unpublished' : ' published',
                             $element['isInvisible'] ? 'invisible' : 'visible',
