@@ -30,6 +30,7 @@ use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\ContaoBackendViewTemplate;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Widget\AbstractWidget;
 use Doctrine\DBAL\Connection;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ContentArticleWidget
@@ -78,7 +79,14 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @var \Contao\CoreBundle\Framework\Adapter|Input
      */
-    private $input;
+    private                     $input;
+
+    /**
+     * The translator interface.
+     *
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     /**
      * Check if we have an id, if not set a flag.
@@ -90,7 +98,8 @@ class ContentArticleWidget extends AbstractWidget
         $arrAttributes = null,
         DcCompat $dcCompat = null,
         Connection $connection = null,
-        Adapter $input = null
+        Adapter $input = null,
+        TranslatorInterface $translator = null
     ) {
         if (null === $connection) {
             // @codingStandardsIgnoreStart
@@ -113,6 +122,17 @@ class ContentArticleWidget extends AbstractWidget
             $input = System::getContainer()->get('contao.framework')->getAdapter(Input::class);
         }
         $this->input = $input;
+
+        if (null === $translator) {
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'Translator is missing. It has to be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $translator = System::getContainer()->get('translator');
+        }
+        $this->translator = $translator;
 
         parent::__construct($arrAttributes, $dcCompat);
 
@@ -200,7 +220,7 @@ class ContentArticleWidget extends AbstractWidget
                                          'rt'     => REQUEST_TOKEN,
                                      ]);
 
-        $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable);
+        $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable, $this->strName);
 
         $content = (new ContaoBackendViewTemplate($this->subTemplate))
             ->setTranslator($this->getEnvironment()->getTranslator())
@@ -225,7 +245,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @throws \Exception|\Doctrine\DBAL\Driver\Exception Throws an Exception.
      */
-    private function getRootMetaModelTable(string $tableName)
+    public function getRootMetaModelTable(string $tableName)
     {
         $tables = [];
 
@@ -270,13 +290,14 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @param int|null $recordId   The record id.
      * @param string   $ptableName The name of parent table.
+     * @param string   $slotName   The name of slot.
      *
      * @return array Returns array with content elements.
      *
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    private function getContentTypesByRecordId(?int $recordId, string $ptableName): array
+    public function getContentTypesByRecordId(?int $recordId, string $ptableName, string $slotName): array
     {
         $contentElements = [];
 
@@ -294,12 +315,12 @@ class ContentArticleWidget extends AbstractWidget
             ->orderBy('t.sorting')
             ->setParameter('pid', $recordId)
             ->setParameter('ptable', $ptableName)
-            ->setParameter('slot', $this->name)
+            ->setParameter('slot', $slotName)
             ->execute();
 
         while ($row = $statement->fetchAssociative()) {
             $contentElements[] = [
-                'name'        => $this->getEnvironment()->getTranslator()->translate($row['type'] . '.0', 'CTE'),
+                'name'        => $this->translator->trans('CTE.' . $row['type'] . '.0', [], 'contao_default'),
                 'isInvisible' => $row['invisible']
                                  || ($row['start'] && $row['start'] > time())
                                  || ($row['stop'] && $row['stop'] <= time())
