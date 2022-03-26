@@ -25,7 +25,6 @@ namespace MetaModels\AttributeContentArticleBundle\Table;
 
 use Contao\Backend;
 use Contao\BackendUser;
-use Contao\Database;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
