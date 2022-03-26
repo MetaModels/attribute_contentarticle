@@ -142,7 +142,7 @@ class ArticleContent
             ->update('tl_content', 't')
             ->set('t.pid', ':pid')
             ->set('t.ptable', ':ptable')
-            ->set('t.mm_slot', ':mm_slot')
+            ->set('t.mm_slot', ':slot')
             ->where('t.id=:id')
             ->setParameter('pid', $pid)
             ->setParameter('ptable', $ptable)
