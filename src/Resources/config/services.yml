@@ -5,3 +5,9 @@ services:
             - '@metamodels.table_manipulator'
         tags:
             - { name: metamodels.attribute_factory }
+    MetaModels\AttributeContentArticleBundle\Table\ArticleContent:
+      arguments:
+        - '@database_connection'
+    MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
+      arguments:
+        - '@database_connection'
