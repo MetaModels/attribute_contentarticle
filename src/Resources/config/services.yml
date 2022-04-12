@@ -5,3 +5,11 @@ services:
             - '@metamodels.table_manipulator'
         tags:
             - { name: metamodels.attribute_factory }
+    MetaModels\AttributeContentArticleBundle\Table\ArticleContent:
+      public: true
+      arguments:
+        - '@database_connection'
+    MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
+      public: true
+      arguments:
+        - '@database_connection'

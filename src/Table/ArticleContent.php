@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2019 The MetaModels team.
+ * (c) 2012-2022 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,8 @@
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Marc Reimann <reimann@mediendepot-ruhr.de>
- * @copyright  2012-2021 The MetaModels team.
+ * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -24,21 +25,42 @@ namespace MetaModels\AttributeContentArticleBundle\Table;
 
 use Contao\Backend;
 use Contao\BackendUser;
-use Contao\Database;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
 use Contao\Session;
 use Contao\System;
+use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-/**
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- */
 class ArticleContent
 {
+    /**
+     * The database connection.
+     *
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $connection;
+
+    /**
+     * The ArticleContent constructor.
+     *
+     * @param Connection|null $connection
+     */
+    public function __construct(Connection $connection = null)
+    {
+        if (null === $connection) {
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'Connection is missing. It has to be passed in the constructor. Fallback will be dropped.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $connection = System::getContainer()->get('database_connection');
+        }
+        $this->connection = $connection;
+    }
+
     /**
      * Return the "toggle visibility" button
      *
@@ -60,9 +82,14 @@ class ArticleContent
      */
     public function save(DataContainer $dataContainer)
     {
-        Database::getInstance()
-                ->prepare('UPDATE tl_content SET mm_slot=? WHERE id=?')
-                ->execute(Input::get('slot'), $dataContainer->id);
+        $this->connection
+            ->createQueryBuilder()
+            ->update('tl_content', 't')
+            ->set('t.mm_slot', ':slot')
+            ->where('t.id=:id')
+            ->setParameter('slot', Input::get('slot'))
+            ->setParameter('id', $dataContainer->id)
+            ->execute();
     }
 
     /**
@@ -85,7 +112,7 @@ class ArticleContent
         $slot   = Input::get('slot');
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
-            $errorCode  = 'Could not update row because one of the data are missing. ';
+            $errorCode = 'Could not update row because one of the data are missing. ';
             $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
             throw new \RuntimeException(
                 \sprintf(
@@ -98,14 +125,18 @@ class ArticleContent
             );
         }
 
-        Database::getInstance()
-                ->prepare('UPDATE tl_content SET pid=?, ptable=?, mm_slot=? WHERE id=?')
-                ->execute(
-                    $pid,
-                    $ptable,
-                    $slot,
-                    $insertId
-                );
+        $this->connection
+            ->createQueryBuilder()
+            ->update('tl_content', 't')
+            ->set('t.pid', ':pid')
+            ->set('t.ptable', ':ptable')
+            ->set('t.mm_slot', ':slot')
+            ->where('t.id=:id')
+            ->setParameter('pid', $pid)
+            ->setParameter('ptable', $ptable)
+            ->setParameter('slot', $slot)
+            ->setParameter('id', $insertId)
+            ->execute();
     }
 
     /**
@@ -125,7 +156,7 @@ class ArticleContent
         $insertId = $dataContainer->id;
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
-            $errorCode  = 'Could not update row because one of the data are missing. ';
+            $errorCode = 'Could not update row because one of the data are missing. ';
             $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
             throw new \RuntimeException(
                 \sprintf(
@@ -138,14 +169,18 @@ class ArticleContent
             );
         }
 
-        Database::getInstance()
-                ->prepare('UPDATE tl_content SET pid=?, ptable=?, mm_slot=? WHERE id=?')
-                ->execute(
-                    $pid,
-                    $ptable,
-                    $slot,
-                    $insertId
-                );
+        $this->connection
+            ->createQueryBuilder()
+            ->update('tl_content', 't')
+            ->set('t.pid', ':pid')
+            ->set('t.ptable', ':ptable')
+            ->set('t.mm_slot', ':slot')
+            ->where('t.id=:id')
+            ->setParameter('pid', $pid)
+            ->setParameter('ptable', $ptable)
+            ->setParameter('slot', $slot)
+            ->setParameter('id', $insertId)
+            ->execute();
     }
 
     /**
@@ -162,12 +197,13 @@ class ArticleContent
 
         // Prevent deleting referenced elements (see #4898)
         if (Input::get('act') == 'deleteAll') {
-            $objCes = Database::getInstance()
-                              ->prepare("SELECT cteAlias 
-                                    FROM tl_content 
-                                    WHERE (ptable='tl_article' OR ptable='') 
-                                      AND type='alias'")
-                              ->execute();
+            $objCes = $this->connection
+                ->createQueryBuilder()
+                ->select('t.cteAlias')
+                ->from('tl_content', 't')
+                ->where('t.ptable=\'tl_article\' OR t.ptable=\'\'')
+                ->andWhere('t.type=\'alias\'')
+                ->execute();
 
             $session                   = $objSession->all();
             $session['CURRENT']['IDS'] = \array_diff($session['CURRENT']['IDS'], $objCes->fetchEach('cteAlias'));
@@ -201,15 +237,21 @@ class ArticleContent
             case 'cutAll':
             case 'copyAll':
                 // Check access to the parent element if a content element is moved
-                if ((Input::get('act') == 'cutAll' ||
-                        Input::get('act') == 'copyAll') &&
-                    !$this->checkAccessToElement(Input::get('pid'), $strParentTable)) {
+                if ((Input::get('act') == 'cutAll'
+                     || Input::get('act') == 'copyAll')
+                    && !$this->checkAccessToElement(Input::get('pid'), $strParentTable)) {
                     Backend::redirect('contao?act=error');
                 }
 
-                $objCes = Database::getInstance()
-                                  ->prepare('SELECT id FROM tl_content WHERE ptable=? AND pid=?')
-                                  ->execute($strParentTable, CURRENT_ID);
+                $objCes = $this->connection
+                    ->createQueryBuilder()
+                    ->select('t.id')
+                    ->from('tl_content', 't')
+                    ->where('t.ptable=:parentTable')
+                    ->andWhere('t.pid=:currentId')
+                    ->setParameter('parentTable', $strParentTable)
+                    ->setParameter('currentId', CURRENT_ID)
+                    ->execute();
 
                 $session                   = Session::getInstance()->getData();
                 $session['CURRENT']['IDS'] = \array_intersect(
@@ -240,7 +282,7 @@ class ArticleContent
      *
      * @param integer $accessId Check ID.
      *
-     * @param array   $ptable   Parent Table.
+     * @param string  $ptable   Parent Table.
      *
      * @param boolean $blnIsPid Is the ID a PID.
      *
@@ -253,15 +295,26 @@ class ArticleContent
         // Workaround for missing ptable when called via Page/File Picker
         if ($strScript != 'contao/page.php' && $strScript != 'contao/file.php') {
             if ($blnIsPid) {
-                $objContent = Database::getInstance()
-                                      ->prepare('SELECT 1 FROM `' . $ptable . '` WHERE id=?')
-                                      ->limit(1)
-                                      ->execute($accessId);
+                $objContent = $this->connection
+                    ->createQueryBuilder()
+                    ->select(1)
+                    ->from($ptable, 't')
+                    ->where('t.id=:id')
+                    ->setParameter('id', $accessId)
+                    ->setMaxResults(1)
+                    ->execute();
+
             } else {
-                $objContent = Database::getInstance()
-                                      ->prepare('SELECT 1 FROM tl_content WHERE id=? AND ptable=?')
-                                      ->limit(1)
-                                      ->execute($accessId, $ptable);
+                $objContent = $this->connection
+                    ->createQueryBuilder()
+                    ->select(1)
+                    ->from('tl_content', 't')
+                    ->where('t.id=:id')
+                    ->andWhere('t.ptable=:ptable')
+                    ->setParameter('id', $accessId)
+                    ->setParameter('ptable', $ptable)
+                    ->setMaxResults(1)
+                    ->execute();
             }
         }
 
