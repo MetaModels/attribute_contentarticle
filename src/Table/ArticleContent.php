@@ -82,9 +82,6 @@ class ArticleContent
      */
     public function save(DataContainer $dataContainer)
     {
-//        Database::getInstance()
-//                ->prepare('UPDATE tl_content SET mm_slot=? WHERE id=?')
-//                ->execute(Input::get('slot'), $dataContainer->id);
         $this->connection
             ->createQueryBuilder()
             ->update('tl_content', 't')
@@ -127,15 +124,6 @@ class ArticleContent
                 )
             );
         }
-
-//        Database::getInstance()
-//                ->prepare('UPDATE tl_content SET pid=?, ptable=?, mm_slot=? WHERE id=?')
-//                ->execute(
-//                    $pid,
-//                    $ptable,
-//                    $slot,
-//                    $insertId
-//                );
 
         $this->connection
             ->createQueryBuilder()
@@ -181,15 +169,6 @@ class ArticleContent
             );
         }
 
-//        Database::getInstance()
-//                ->prepare('UPDATE tl_content SET pid=?, ptable=?, mm_slot=? WHERE id=?')
-//                ->execute(
-//                    $pid,
-//                    $ptable,
-//                    $slot,
-//                    $insertId
-//                );
-
         $this->connection
             ->createQueryBuilder()
             ->update('tl_content', 't')
@@ -218,13 +197,6 @@ class ArticleContent
 
         // Prevent deleting referenced elements (see #4898)
         if (Input::get('act') == 'deleteAll') {
-//            $objCes = Database::getInstance()
-//                              ->prepare("SELECT cteAlias
-//                                    FROM tl_content
-//                                    WHERE (ptable='tl_article' OR ptable='')
-//                                      AND type='alias'")
-//                              ->execute();
-
             $objCes = $this->connection
                 ->createQueryBuilder()
                 ->select('t.cteAlias')
@@ -270,10 +242,6 @@ class ArticleContent
                     && !$this->checkAccessToElement(Input::get('pid'), $strParentTable)) {
                     Backend::redirect('contao?act=error');
                 }
-
-//                $objCes = Database::getInstance()
-//                                  ->prepare('SELECT id FROM tl_content WHERE ptable=? AND pid=?')
-//                                  ->execute($strParentTable, CURRENT_ID);
 
                 $objCes = $this->connection
                     ->createQueryBuilder()
@@ -327,10 +295,6 @@ class ArticleContent
         // Workaround for missing ptable when called via Page/File Picker
         if ($strScript != 'contao/page.php' && $strScript != 'contao/file.php') {
             if ($blnIsPid) {
-//                $objContent = Database::getInstance()
-//                                      ->prepare('SELECT 1 FROM `' . $ptable . '` WHERE id=?')
-//                                      ->limit(1)
-//                                      ->execute($accessId);
                 $objContent = $this->connection
                     ->createQueryBuilder()
                     ->select(1)
@@ -341,10 +305,6 @@ class ArticleContent
                     ->execute();
 
             } else {
-//                $objContent = Database::getInstance()
-//                                      ->prepare('SELECT 1 FROM tl_content WHERE id=? AND ptable=?')
-//                                      ->limit(1)
-//                                      ->execute($accessId, $ptable);
                 $objContent = $this->connection
                     ->createQueryBuilder()
                     ->select(1)

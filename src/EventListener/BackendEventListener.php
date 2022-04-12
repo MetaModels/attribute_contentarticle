@@ -130,10 +130,6 @@ class BackendEventListener
      */
     private function duplicateContentEntries($strTable, $intSourceId, $intDestinationId)
     {
-//        $objContent = \Database::getInstance()
-//            ->prepare('SELECT * FROM tl_content WHERE pid=? AND ptable=?')
-//            ->execute($intSourceId, $strTable);
-
         $objContent = $this->connection
             ->createQueryBuilder()
             ->select('*')
@@ -144,17 +140,11 @@ class BackendEventListener
             ->setParameter('ptable', $strTable)
             ->execute();
 
-//        while ($objContent->next()) {
-//            $arrContent        = $objContent->row();
         while ($row = $objContent->fetch(\PDO::FETCH_ASSOC)) {
             $arrContent        = $row;
             $arrContent['pid'] = $intDestinationId;
             unset($arrContent['id']);
 
-//            \Database::getInstance()
-//                ->prepare('INSERT INTO tl_content %s')
-//                ->set($arrContent)
-//                ->execute();
             $this->connection
                 ->createQueryBuilder()
                 ->insert('tl_content')
