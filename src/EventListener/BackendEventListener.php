@@ -138,9 +138,9 @@ class BackendEventListener
             ->andWhere('t.ptable=:ptable')
             ->setParameter('id', $intSourceId)
             ->setParameter('ptable', $strTable)
-            ->execute();
+            ->executeQuery();
 
-        while ($row = $objContent->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $objContent->fetchAssociative()) {
             $arrContent        = $row;
             $arrContent['pid'] = $intDestinationId;
             unset($arrContent['id']);

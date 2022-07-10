@@ -302,7 +302,7 @@ class ArticleContent
                     ->where('t.id=:id')
                     ->setParameter('id', $accessId)
                     ->setMaxResults(1)
-                    ->execute();
+                    ->executeQuery();
 
             } else {
                 $objContent = $this->connection
@@ -314,12 +314,12 @@ class ArticleContent
                     ->setParameter('id', $accessId)
                     ->setParameter('ptable', $ptable)
                     ->setMaxResults(1)
-                    ->execute();
+                    ->executeQuery();
             }
         }
 
         // Invalid ID
-        if ($objContent->numRows < 1) {
+        if ($objContent->rowCount() < 1) {
             System::log('Invalid content element ID ' . $accessId, __METHOD__, TL_ERROR);
 
             return false;
