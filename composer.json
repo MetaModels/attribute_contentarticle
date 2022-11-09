@@ -50,5 +50,12 @@
     "branch-alias": {
       "dev-feature/2.2.0": "2.2.x-dev"
     }
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": false,
+      "contao/manager-plugin": false
+    },
+    "sort-packages": true
   }
 }
