@@ -25,6 +25,7 @@ use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use Doctrine\DBAL\Connection;
 use MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @covers \MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget
@@ -42,7 +43,7 @@ class ContentArticleWidgetTest extends TestCase
 
         $input = $this->getMockBuilder(Adapter::class)
                       ->disableOriginalConstructor()
-                      ->setMethods(['get'])
+                      ->addMethods(['get'])
                       ->getMock();
 
         $input
@@ -50,9 +51,11 @@ class ContentArticleWidgetTest extends TestCase
             ->method('get')
             ->willReturn(1);
 
+        $translator = $this->getMockBuilder(TranslatorInterface::class)->getMock();
+
         $widget = $this->getMockBuilder(ContentArticleWidget::class)
-                       ->setConstructorArgs([null, $dcCompat, $connection, $input])
-                       ->setMethods(['import'])
+                       ->setConstructorArgs([null, $dcCompat, $connection, $input, $translator])
+                       ->onlyMethods(['import'])
                        ->getMock();
 
         $widget
