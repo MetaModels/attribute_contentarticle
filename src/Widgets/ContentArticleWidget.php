@@ -15,6 +15,7 @@
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
@@ -79,7 +80,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @var \Contao\CoreBundle\Framework\Adapter|Input
      */
-    private                     $input;
+    private $input;
 
     /**
      * The translator interface.
@@ -293,9 +294,6 @@ class ContentArticleWidget extends AbstractWidget
      * @param string   $slotName   The name of slot.
      *
      * @return array Returns array with content elements.
-     *
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
      */
     public function getContentTypesByRecordId(?int $recordId, string $ptableName, string $slotName): array
     {
