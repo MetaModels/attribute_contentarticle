@@ -15,6 +15,7 @@ declare(strict_types=1);
  * @package    MetaModels
  * @subpackage AttributeContentArticle
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  */
 
 namespace DependencyInjection;
