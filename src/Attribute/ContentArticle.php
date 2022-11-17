@@ -81,8 +81,6 @@ class ContentArticle extends BaseComplex
      *
      * @return mixed[]
      *
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -107,11 +105,12 @@ class ContentArticle extends BaseComplex
             if (TL_MODE == 'BE') {
                 $elements = $contentArticle->getContentTypesByRecordId($intId, $rootTable, $strColumn);
                 $content  = '';
-                if(count($elements)) {
+                if (count($elements)) {
                     $content .= '<ul class="elements_container">';
                     foreach ((array) $elements as $element) {
                         $content .= \sprintf(
-                            '<li><div class="cte_type%s"><img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
+                            '<li><div class="cte_type%s">' .
+                            '<img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
                             $element['isInvisible'] ? ' unpublished' : ' published',
                             $element['isInvisible'] ? 'invisible' : 'visible',
                             $element['name']

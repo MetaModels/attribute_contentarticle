@@ -15,6 +15,7 @@
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
@@ -40,9 +41,9 @@ class AttributeTypeFactory extends AbstractSimpleAttributeTypeFactory
     ) {
         parent::__construct($connection, $tableManipulator);
 
-        $this->typeName        = 'contentarticle';
-        $this->typeIcon        = 'bundles/metamodelsattributecontentarticle/article.png';
-        $this->typeClass       = ContentArticle::class;
+        $this->typeName  = 'contentarticle';
+        $this->typeIcon  = 'bundles/metamodelsattributecontentarticle/article.png';
+        $this->typeClass = ContentArticle::class;
     }
 
     /**

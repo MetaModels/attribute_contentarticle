@@ -15,6 +15,7 @@ declare(strict_types=1);
  * @package    MetaModels
  * @subpackage AttributeContentArticle
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  */
 
 namespace DependencyInjection;
@@ -24,6 +25,7 @@ use MetaModels\AttributeContentArticleBundle\DependencyInjection\MetaModelsAttri
 use MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener;
 use MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener;
 use MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener;
+use MetaModels\AttributeContentArticleBundle\Table\ArticleContent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -43,7 +45,8 @@ class MetaModelsAttributeContentArticleExtensionTest extends TestCase
             BackendEventListener::class,
             GetOptionsListener::class,
             InitializeListener::class,
-            AttributeTypeFactory::class
+            AttributeTypeFactory::class,
+            ArticleContent::class,
         ];
 
         self::assertCount(count($expectedDefinitions), $container->getDefinitions());

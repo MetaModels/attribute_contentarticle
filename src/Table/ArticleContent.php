@@ -16,6 +16,7 @@
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Marc Reimann <reimann@mediendepot-ruhr.de>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
@@ -33,6 +34,9 @@ use Contao\System;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * This is a DCA helper class.
+ */
 class ArticleContent
 {
     /**
@@ -45,7 +49,7 @@ class ArticleContent
     /**
      * The ArticleContent constructor.
      *
-     * @param Connection|null $connection
+     * @param Connection|null $connection The database connection.
      */
     public function __construct(Connection $connection = null)
     {
@@ -112,7 +116,7 @@ class ArticleContent
         $slot   = Input::get('slot');
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
-            $errorCode = 'Could not update row because one of the data are missing. ';
+            $errorCode  = 'Could not update row because one of the data are missing. ';
             $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
             throw new \RuntimeException(
                 \sprintf(
@@ -156,7 +160,7 @@ class ArticleContent
         $insertId = $dataContainer->id;
 
         if (empty($pid) || empty($ptable) || empty($slot)) {
-            $errorCode = 'Could not update row because one of the data are missing. ';
+            $errorCode  = 'Could not update row because one of the data are missing. ';
             $errorCode .= 'Insert ID: %s, Pid: %s, Parent table: %s, Slot: %s';
             throw new \RuntimeException(
                 \sprintf(
@@ -303,7 +307,6 @@ class ArticleContent
                     ->setParameter('id', $accessId)
                     ->setMaxResults(1)
                     ->executeQuery();
-
             } else {
                 $objContent = $this->connection
                     ->createQueryBuilder()

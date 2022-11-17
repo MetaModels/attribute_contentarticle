@@ -15,6 +15,7 @@
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
@@ -52,7 +53,7 @@ class BackendEventListener
     /**
      * The ArticleContent constructor.
      *
-     * @param Connection|null $connection
+     * @param Connection|null $connection The database connection.
      */
     public function __construct(Connection $connection = null)
     {
