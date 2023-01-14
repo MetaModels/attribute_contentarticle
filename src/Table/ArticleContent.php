@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2022 The MetaModels team.
+ * (c) 2012-2023 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,7 +17,7 @@
  * @author     Marc Reimann <reimann@mediendepot-ruhr.de>
  * @author     Ingolf Steinhardt <info@e-spin.de>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
- * @copyright  2012-2022 The MetaModels team.
+ * @copyright  2012-2023 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -29,9 +29,9 @@ use Contao\BackendUser;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
-use Contao\Session;
 use Contao\System;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -47,22 +47,39 @@ class ArticleContent
     private $connection;
 
     /**
+     * Symfony session object
+     *
+     * @var Session|null
+     */
+    private Session|null $session;
+
+    /**
      * The ArticleContent constructor.
      *
      * @param Connection|null $connection The database connection.
+     * @param Session|null    $session    The session.
      */
-    public function __construct(Connection $connection = null)
+    public function __construct(Connection $connection = null, Session $session = null)
     {
-        if (null === $connection) {
+        if (null === ($this->connection = $connection)) {
             // @codingStandardsIgnoreStart
             @trigger_error(
                 'Connection is missing. It has to be passed in the constructor. Fallback will be dropped.',
                 E_USER_DEPRECATED
             );
             // @codingStandardsIgnoreEnd
-            $connection = System::getContainer()->get('database_connection');
+            $this->connection = System::getContainer()->get('database_connection');
         }
-        $this->connection = $connection;
+
+        if (null === ($this->session = $session)) {
+            // @codingStandardsIgnoreStart
+            @trigger_error(
+                'Not passing an "Session" is deprecated.',
+                E_USER_DEPRECATED
+            );
+            // @codingStandardsIgnoreEnd
+            $this->session = System::getContainer()->get('session');
+        }
     }
 
     /**
@@ -74,7 +91,7 @@ class ArticleContent
     {
         $controller = new \tl_content();
 
-        return call_user_func_array([$controller, 'toggleIcon'], func_get_args());
+        return \call_user_func_array([$controller, 'toggleIcon'], \func_get_args());
     }
 
     /**
@@ -93,7 +110,7 @@ class ArticleContent
             ->where('t.id=:id')
             ->setParameter('slot', Input::get('slot'))
             ->setParameter('id', $dataContainer->id)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -140,7 +157,7 @@ class ArticleContent
             ->setParameter('ptable', $ptable)
             ->setParameter('slot', $slot)
             ->setParameter('id', $insertId)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -184,7 +201,7 @@ class ArticleContent
             ->setParameter('ptable', $ptable)
             ->setParameter('slot', $slot)
             ->setParameter('id', $insertId)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -196,9 +213,6 @@ class ArticleContent
      */
     public function checkPermission()
     {
-        /** @var SessionInterface $objSession */
-        $objSession = System::getContainer()->get('session');
-
         // Prevent deleting referenced elements (see #4898)
         if (Input::get('act') == 'deleteAll') {
             $objCes = $this->connection
@@ -207,11 +221,11 @@ class ArticleContent
                 ->from('tl_content', 't')
                 ->where('t.ptable=\'tl_article\' OR t.ptable=\'\'')
                 ->andWhere('t.type=\'alias\'')
-                ->execute();
+                ->executeQuery();
 
-            $session                   = $objSession->all();
+            $session                   = $this->session->all();
             $session['CURRENT']['IDS'] = \array_diff($session['CURRENT']['IDS'], $objCes->fetchEach('cteAlias'));
-            $objSession->replace($session);
+            $this->session->replace($session);
         }
 
         if (BackendUser::getInstance()->isAdmin) {
@@ -255,14 +269,14 @@ class ArticleContent
                     ->andWhere('t.pid=:currentId')
                     ->setParameter('parentTable', $strParentTable)
                     ->setParameter('currentId', CURRENT_ID)
-                    ->execute();
+                    ->executeQuery();
 
-                $session                   = Session::getInstance()->getData();
+                $session                   = $this->session->all();
                 $session['CURRENT']['IDS'] = \array_intersect(
                     $session['CURRENT']['IDS'],
                     $objCes->fetchEach('id')
                 );
-                $objSession->replace($session);
+                $this->session->replace($session);
                 break;
 
             case 'cut':

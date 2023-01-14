@@ -9,6 +9,7 @@ services:
       public: true
       arguments:
         - '@database_connection'
+        - '@session'
     MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
       public: true
       arguments:
