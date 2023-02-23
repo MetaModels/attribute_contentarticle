@@ -31,6 +31,7 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\System;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -210,8 +211,10 @@ class ArticleContent
      * @return void
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
+     * @throws Exception
      */
-    public function checkPermission()
+    public function checkPermission(): void
     {
         // Prevent deleting referenced elements (see #4898)
         if (Input::get('act') == 'deleteAll') {
@@ -274,7 +277,7 @@ class ArticleContent
                 $session                   = $this->session->all();
                 $session['CURRENT']['IDS'] = \array_intersect(
                     $session['CURRENT']['IDS'],
-                    $objCes->fetchEach('id')
+                    $objCes->fetchFirstColumn('id')
                 );
                 $this->session->replace($session);
                 break;
