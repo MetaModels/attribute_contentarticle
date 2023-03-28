@@ -88,7 +88,7 @@ class ArticleContent
     }
 
     /**
-     * Return the "toggle visibility" button
+     * Return the "toggle visibility" button.
      *
      * @return string The icon url with all information.
      */
@@ -211,7 +211,7 @@ class ArticleContent
     /**
      * Check permissions to edit table tl_content.
      *
-     * @param DataContainer $dataContainer The data container.
+     * @param DataContainer $dataContainer The DC Driver.
      *
      * @return void
      *
@@ -228,7 +228,7 @@ class ArticleContent
         $strParentTable = Input::get('ptable');
         $strParentTable = \preg_replace('#[^A-Za-z0-9_]#', '', $strParentTable);
 
-        // Check the current action
+        // Check the current action.
         switch (Input::get('act')) {
             case 'editAll':
             case 'deleteAll':
@@ -244,6 +244,7 @@ class ArticleContent
                     ->setParameter('parentTable', $strParentTable)
                     ->setParameter('currentId', $dataContainer->currentPid)
                     ->executeQuery();
+
                 $contaoBeSession = $this->session->getBag('contao_backend');
                 assert($contaoBeSession instanceof AttributeBagInterface);
                 $contaoBeSession->set(
