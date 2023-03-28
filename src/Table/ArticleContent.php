@@ -32,6 +32,8 @@ use Contao\Input;
 use Contao\System;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -43,16 +45,16 @@ class ArticleContent
     /**
      * The database connection.
      *
-     * @var \Doctrine\DBAL\Connection
+     * @var Connection|null
      */
-    private $connection;
+    private Connection|null $connection;
 
     /**
      * Symfony session object
      *
-     * @var Session|null
+     * @var Session
      */
-    private Session|null $session;
+    private Session $session;
 
     /**
      * The ArticleContent constructor.
@@ -72,14 +74,16 @@ class ArticleContent
             $this->connection = System::getContainer()->get('database_connection');
         }
 
-        if (null === ($this->session = $session)) {
+        if (null === $session) {
             // @codingStandardsIgnoreStart
             @trigger_error(
                 'Not passing an "Session" is deprecated.',
                 E_USER_DEPRECATED
             );
             // @codingStandardsIgnoreEnd
-            $this->session = System::getContainer()->get('session');
+            $session = System::getContainer()->get('session');
+            assert($session instanceof Session);
+            $this->session = $session;
         }
     }
 
@@ -88,7 +92,7 @@ class ArticleContent
      *
      * @return string The icon url with all information.
      */
-    public function toggleIcon()
+    public function toggleIcon(): string
     {
         $controller = new \tl_content();
 
@@ -101,8 +105,9 @@ class ArticleContent
      * @param DataContainer $dataContainer The DC Driver.
      *
      * @return void
+     * @throws Exception
      */
-    public function save(DataContainer $dataContainer)
+    public function save(DataContainer $dataContainer): void
     {
         $this->connection
             ->createQueryBuilder()
@@ -118,16 +123,14 @@ class ArticleContent
      * Update the data from copies and set the context like pid, parent table, slot.
      *
      * @param string        $insertId      The id of the new entry.
-     *
      * @param DataContainer $dataContainer The DC Driver.
      *
      * @return void
      *
-     * @throws \RuntimeException If the id is missing for the entry.
-     *
+     * @throws Exception
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function updateCopyData(string $insertId, DataContainer $dataContainer)
+    public function updateCopyData(string $insertId, DataContainer $dataContainer): void
     {
         $pid    = Input::get('mid');
         $ptable = Input::get('ptable');
@@ -168,9 +171,9 @@ class ArticleContent
      *
      * @return void
      *
-     * @throws \RuntimeException If the id is missing for the entry.
+     * @throws Exception
      */
-    public function updateCutData(DataContainer $dataContainer)
+    public function updateCutData(DataContainer $dataContainer): void
     {
         $pid      = Input::get('mid');
         $ptable   = Input::get('ptable');
@@ -208,29 +211,16 @@ class ArticleContent
     /**
      * Check permissions to edit table tl_content.
      *
+     * @param DataContainer $dataContainer
+     *
      * @return void
      *
+     * @throws Exception
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
-     * @throws Exception
      */
-    public function checkPermission(): void
+    public function checkPermission(DataContainer $dataContainer): void
     {
-        // Prevent deleting referenced elements (see #4898)
-        if (Input::get('act') == 'deleteAll') {
-            $objCes = $this->connection
-                ->createQueryBuilder()
-                ->select('t.cteAlias')
-                ->from('tl_content', 't')
-                ->where('t.ptable=\'tl_article\' OR t.ptable=\'\'')
-                ->andWhere('t.type=\'alias\'')
-                ->executeQuery();
-
-            $session                   = $this->session->all();
-            $session['CURRENT']['IDS'] = \array_diff($session['CURRENT']['IDS'], $objCes->fetchEach('cteAlias'));
-            $this->session->replace($session);
-        }
-
         if (BackendUser::getInstance()->isAdmin) {
             return;
         }
@@ -240,30 +230,11 @@ class ArticleContent
 
         // Check the current action
         switch (Input::get('act')) {
-            case 'paste':
-                // Allow paste
-                break;
-            case '':
-            case 'create':
-            case 'select':
-                // Check access to the article
-                if (!$this->checkAccessToElement(CURRENT_ID, $strParentTable, true)) {
-                    Backend::redirect('contao?act=error');
-                }
-                break;
-
             case 'editAll':
             case 'deleteAll':
             case 'overrideAll':
             case 'cutAll':
             case 'copyAll':
-                // Check access to the parent element if a content element is moved
-                if ((Input::get('act') == 'cutAll'
-                     || Input::get('act') == 'copyAll')
-                    && !$this->checkAccessToElement(Input::get('pid'), $strParentTable)) {
-                    Backend::redirect('contao?act=error');
-                }
-
                 $objCes = $this->connection
                     ->createQueryBuilder()
                     ->select('t.id')
@@ -271,80 +242,22 @@ class ArticleContent
                     ->where('t.ptable=:parentTable')
                     ->andWhere('t.pid=:currentId')
                     ->setParameter('parentTable', $strParentTable)
-                    ->setParameter('currentId', CURRENT_ID)
+                    ->setParameter('currentId', $dataContainer->currentPid)
                     ->executeQuery();
-
-                $session                   = $this->session->all();
-                $session['CURRENT']['IDS'] = \array_intersect(
-                    $session['CURRENT']['IDS'],
-                    $objCes->fetchFirstColumn('id')
+                $contaoBeSession = $this->session->getBag('contao_backend');
+                assert($contaoBeSession instanceof AttributeBagInterface);
+                $contaoBeSession->set(
+                    'CURRENT',
+                    \array_diff($contaoBeSession->get('CURRENT') ?? [], $objCes->fetchFirstColumn())
                 );
-                $this->session->replace($session);
                 break;
-
+            case 'paste':
+            case '':
+            case 'create':
+            case 'select':
             case 'cut':
             case 'copy':
-                // Check access to the parent element if a content element is moved
-                if (!$this->checkAccessToElement(Input::get('pid'), $strParentTable)) {
-                    Backend::redirect('contao?act=error');
-                }
-            // NO BREAK STATEMENT HERE
             default:
-                // Check access to the content element
-                if (!$this->checkAccessToElement(Input::get('id'), $strParentTable)) {
-                    Backend::redirect('contao?act=error');
-                }
-                break;
         }
-    }
-
-    /**
-     * Check access to a particular content element.
-     *
-     * @param integer $accessId Check ID.
-     *
-     * @param string  $ptable   Parent Table.
-     *
-     * @param boolean $blnIsPid Is the ID a PID.
-     *
-     * @return bool
-     */
-    protected function checkAccessToElement($accessId, $ptable, $blnIsPid = false)
-    {
-        $strScript = Environment::get('script');
-
-        // Workaround for missing ptable when called via Page/File Picker
-        if ($strScript != 'contao/page.php' && $strScript != 'contao/file.php') {
-            if ($blnIsPid) {
-                $objContent = $this->connection
-                    ->createQueryBuilder()
-                    ->select(1)
-                    ->from($ptable, 't')
-                    ->where('t.id=:id')
-                    ->setParameter('id', $accessId)
-                    ->setMaxResults(1)
-                    ->executeQuery();
-            } else {
-                $objContent = $this->connection
-                    ->createQueryBuilder()
-                    ->select(1)
-                    ->from('tl_content', 't')
-                    ->where('t.id=:id')
-                    ->andWhere('t.ptable=:ptable')
-                    ->setParameter('id', $accessId)
-                    ->setParameter('ptable', $ptable)
-                    ->setMaxResults(1)
-                    ->executeQuery();
-            }
-        }
-
-        // Invalid ID
-        if ($objContent->rowCount() < 1) {
-            System::log('Invalid content element ID ' . $accessId, __METHOD__, TL_ERROR);
-
-            return false;
-        }
-
-        return true;
     }
 }
