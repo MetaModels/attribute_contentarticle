@@ -211,7 +211,7 @@ class ArticleContent
     /**
      * Check permissions to edit table tl_content.
      *
-     * @param DataContainer $dataContainer
+     * @param DataContainer $dataContainer The data container.
      *
      * @return void
      *
