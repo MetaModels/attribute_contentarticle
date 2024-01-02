@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2022 The MetaModels team.
+ * (c) 2012-2023 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +16,7 @@
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
- * @copyright  2012-2022 The MetaModels team.
+ * @copyright  2012-2023 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -24,15 +24,15 @@
 namespace MetaModels\AttributeContentArticleBundle\EventListener;
 
 use Contao\System;
-use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\ManipulateWidgetEvent;
 use ContaoCommunityAlliance\DcGeneral\Event\PostDuplicateModelEvent;
 use ContaoCommunityAlliance\DcGeneral\Event\PostPasteModelEvent;
 use Doctrine\DBAL\Connection;
 use MetaModels\DcGeneral\Data\Model;
-use MetaModels\DcGeneral\Data\Driver;
 
 /**
- * Handles event operations on tl_metamodel_dcasetting.
+ * Handles event operations on tl_metamodel_dcasetting
+ *
+ * @SuppressWarnings(PHPMD.LongVariable).
  */
 class BackendEventListener
 {
@@ -41,14 +41,14 @@ class BackendEventListener
      *
      * @var int
      */
-    private $intDuplicationSourceId;
+    private int $intDuplicationSourceId;
 
     /**
      * The database connection.
      *
-     * @var \Doctrine\DBAL\Connection
+     * @var Connection|null
      */
-    private $connection;
+    private Connection $connection;
 
     /**
      * The ArticleContent constructor.
@@ -65,6 +65,7 @@ class BackendEventListener
             );
             // @codingStandardsIgnoreEnd
             $connection = System::getContainer()->get('database_connection');
+            assert($connection instanceof Connection);
         }
         $this->connection = $connection;
     }
@@ -122,14 +123,12 @@ class BackendEventListener
      * Duplicate the content entries.
      *
      * @param string $strTable         Table.
-     *
      * @param int    $intSourceId      The Source Id.
-     *
      * @param int    $intDestinationId The Destination Id.
      *
      * @return void
      */
-    private function duplicateContentEntries($strTable, $intSourceId, $intDestinationId)
+    private function duplicateContentEntries(string $strTable, int $intSourceId, int $intDestinationId): void
     {
         $objContent = $this->connection
             ->createQueryBuilder()
@@ -150,7 +149,7 @@ class BackendEventListener
                 ->createQueryBuilder()
                 ->insert('tl_content')
                 ->setParameters($arrContent)
-                ->execute();
+                ->executeQuery();
         }
     }
 }

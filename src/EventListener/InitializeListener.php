@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2022 The MetaModels team.
+ * (c) 2012-2023 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,7 @@
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2012-2022 The MetaModels team.
+ * @copyright  2012-2023 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
@@ -43,6 +43,8 @@ class InitializeListener
      * @param AuthenticationTrustResolverInterface $authenticationTrustResolver The authentication resolver.
      * @param ScopeMatcher                         $scopeMatcher                The scope matche.
      * @param ViewCombination                      $viewCombination             The view combination.
+     *
+     * @SuppressWarnings(PHPMD.LongVariable)
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
@@ -96,7 +98,7 @@ class InitializeListener
         $strTable       = Input::get('table');
         $blnLangSupport = Input::get('langSupport');
 
-        if (substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content' && $blnLangSupport === null) {
+        if (\str_starts_with($strModule, 'metamodel_') && $strTable === 'tl_content' && $blnLangSupport === null) {
             $needsToBeAdded = true;
             foreach ($GLOBALS['BE_MOD'] as $key => $mod) {
                 if (isset($mod[$strModule])) {

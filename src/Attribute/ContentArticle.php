@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2022 The MetaModels team.
+ * (c) 2012-2023 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,16 +16,17 @@
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2012-2022 The MetaModels team.
+ * @copyright  2012-2023 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
 
-
 namespace MetaModels\AttributeContentArticleBundle\Attribute;
 
+use Contao\System;
 use MetaModels\Attribute\BaseComplex;
 use MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This is the AttributeContentArticle class for handling article fields.
@@ -102,12 +103,17 @@ class ContentArticle extends BaseComplex
             static::$arrCallIds[$strCallId] = true;
 
             // Generate list for backend.
-            if (TL_MODE == 'BE') {
+            $isBackend = System::getContainer()
+                ->get('contao.routing.scope_matcher')
+                ?->isBackendRequest(
+                    System::getContainer()->get('request_stack')?->getCurrentRequest() ?? Request::create('')
+                );
+            if ($isBackend) {
                 $elements = $contentArticle->getContentTypesByRecordId($intId, $rootTable, $strColumn);
                 $content  = '';
-                if (count($elements)) {
+                if (\count($elements)) {
                     $content .= '<ul class="elements_container">';
-                    foreach ((array) $elements as $element) {
+                    foreach ($elements as $element) {
                         $content .= \sprintf(
                             '<li><div class="cte_type%s">' .
                             '<img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
@@ -127,13 +133,18 @@ class ContentArticle extends BaseComplex
             }
 
             // Generate output for frontend.
-            if (TL_MODE == 'FE') {
+            $isFrontend = System::getContainer()
+                ->get('contao.routing.scope_matcher')
+                ?->isFrontendRequest(
+                    System::getContainer()->get('request_stack')?->getCurrentRequest() ?? Request::create('')
+                );
+            if ($isFrontend) {
                 $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
                 $arrContent = [];
 
                 if ($objContent !== null) {
                     while ($objContent->next()) {
-                        if ($objContent->mm_slot == $strColumn) {
+                        if ($objContent->mm_slot === $strColumn) {
                             $arrContent[] = \Controller::getContentElement($objContent->current());
                         }
                     }

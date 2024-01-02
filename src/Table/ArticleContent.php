@@ -45,9 +45,9 @@ class ArticleContent
     /**
      * The database connection.
      *
-     * @var Connection|null
+     * @var Connection
      */
-    private Connection|null $connection;
+    private Connection $connection;
 
     /**
      * Symfony session object
@@ -64,15 +64,17 @@ class ArticleContent
      */
     public function __construct(Connection $connection = null, Session $session = null)
     {
-        if (null === ($this->connection = $connection)) {
+        if (null === $connection) {
             // @codingStandardsIgnoreStart
             @trigger_error(
                 'Connection is missing. It has to be passed in the constructor. Fallback will be dropped.',
                 E_USER_DEPRECATED
             );
             // @codingStandardsIgnoreEnd
-            $this->connection = System::getContainer()->get('database_connection');
+            $connection = System::getContainer()->get('database_connection');
+            assert($connection instanceof Connection);
         }
+        $this->connection = $connection;
 
         if (null === $session) {
             // @codingStandardsIgnoreStart
@@ -83,8 +85,8 @@ class ArticleContent
             // @codingStandardsIgnoreEnd
             $session = System::getContainer()->get('session');
             assert($session instanceof Session);
-            $this->session = $session;
         }
+        $this->session = $session;
     }
 
     /**
