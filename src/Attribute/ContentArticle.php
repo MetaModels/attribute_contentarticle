@@ -23,6 +23,8 @@
 
 namespace MetaModels\AttributeContentArticleBundle\Attribute;
 
+use Contao\ContentModel;
+use Contao\Controller;
 use Contao\System;
 use MetaModels\Attribute\BaseComplex;
 use MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget;
@@ -57,6 +59,7 @@ class ContentArticle extends BaseComplex
     public function getFilterOptions($idList, $usedOnly, &$arrCount = null)
     {
         // Needed to fake implement BaseComplex.
+        return [];
     }
 
     /**
@@ -80,7 +83,7 @@ class ContentArticle extends BaseComplex
      *
      * @param array $arrIds Array of Data Ids.
      *
-     * @return mixed[]
+     * @return array<string, mixed>
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -91,7 +94,6 @@ class ContentArticle extends BaseComplex
         $strColumn      = $this->getColName();
         $arrData        = [];
         $contentArticle = new ContentArticleWidget();
-        $rootTable      = $contentArticle->getRootMetaModelTable($strTable);
 
         foreach ($arrIds as $intId) {
             // Continue if it's a recursive call
@@ -103,12 +105,14 @@ class ContentArticle extends BaseComplex
             static::$arrCallIds[$strCallId] = true;
 
             // Generate list for backend.
-            $isBackend = System::getContainer()
+            $isBackend = (bool) System::getContainer()
                 ->get('contao.routing.scope_matcher')
                 ?->isBackendRequest(
                     System::getContainer()->get('request_stack')?->getCurrentRequest() ?? Request::create('')
                 );
             if ($isBackend) {
+                $rootTable = $contentArticle->getRootMetaModelTable($strTable);
+                assert(\is_string($rootTable));
                 $elements = $contentArticle->getContentTypesByRecordId($intId, $rootTable, $strColumn);
                 $content  = '';
                 if (\count($elements)) {
@@ -133,19 +137,19 @@ class ContentArticle extends BaseComplex
             }
 
             // Generate output for frontend.
-            $isFrontend = System::getContainer()
+            $isFrontend = (bool) System::getContainer()
                 ->get('contao.routing.scope_matcher')
                 ?->isFrontendRequest(
                     System::getContainer()->get('request_stack')?->getCurrentRequest() ?? Request::create('')
                 );
             if ($isFrontend) {
-                $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
+                $objContent = ContentModel::findPublishedByPidAndTable($intId, $strTable);
                 $arrContent = [];
 
                 if ($objContent !== null) {
                     while ($objContent->next()) {
                         if ($objContent->mm_slot === $strColumn) {
-                            $arrContent[] = \Controller::getContentElement($objContent->current());
+                            $arrContent[] = Controller::getContentElement($objContent->current());
                         }
                     }
                 }

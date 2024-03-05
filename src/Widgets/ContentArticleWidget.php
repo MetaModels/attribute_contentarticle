@@ -30,6 +30,7 @@ use Contao\System;
 use ContaoCommunityAlliance\DcGeneral\Contao\Compatibility\DcCompat;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\ContaoBackendViewTemplate;
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Widget\AbstractWidget;
+use ContaoCommunityAlliance\Translator\TranslatorInterface as CcaTranslatorInterface;
 use Doctrine\DBAL\Connection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -37,6 +38,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Class ContentArticleWidget
  *
  * @package MetaModels\AttributeContentArticleBundle\Widgets
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class ContentArticleWidget extends AbstractWidget
 {
@@ -50,7 +53,7 @@ class ContentArticleWidget extends AbstractWidget
     /**
      * Add a for attribute.
      *
-     * @var boolean
+     * @var bool
      */
     protected $blnForAttribute = false;
 
@@ -71,16 +74,16 @@ class ContentArticleWidget extends AbstractWidget
     /**
      * The database connection.
      *
-     * @var Connection|null
+     * @var Connection
      */
-    private null|Connection $connection;
+    private Connection $connection;
 
     /**
      * The contao input.
      *
-     * @var Adapter|Input|null
+     * @var Adapter|Input
      */
-    private Adapter|Input|null $input;
+    private Adapter|Input $input;
 
     /**
      * The translator interface.
@@ -96,7 +99,7 @@ class ContentArticleWidget extends AbstractWidget
      * @inheritDoc
      */
     public function __construct(
-        $arrAttributes = null,
+        array $arrAttributes = null,
         DcCompat $dcCompat = null,
         Connection $connection = null,
         Adapter $input = null,
@@ -195,7 +198,7 @@ class ContentArticleWidget extends AbstractWidget
             case 'subTemplate':
                 return isset($this->subTemplate);
             default:
-                return parent::__get($strKey);
+                return (bool) parent::__get($strKey);
         }
     }
 
@@ -210,7 +213,7 @@ class ContentArticleWidget extends AbstractWidget
      */
     public function generate()
     {
-        $rootTable    = $this->getRootMetaModelTable($this->strTable);
+        $rootTable    = (string) $this->getRootMetaModelTable($this->strTable);
         $requestToken = System::getContainer()->get('contao.csrf.token_manager')?->getDefaultTokenValue();
 
         $strQuery = \http_build_query([
@@ -227,8 +230,11 @@ class ContentArticleWidget extends AbstractWidget
 
         $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable, $this->strName);
 
+        $translator = $this->getEnvironment()->getTranslator();
+        assert($translator instanceof CcaTranslatorInterface);
+
         $content = (new ContaoBackendViewTemplate($this->subTemplate))
-            ->setTranslator($this->getEnvironment()->getTranslator())
+            ->setTranslator($translator)
             ->set('name', $this->strName)
             ->set('id', $this->strId)
             ->set('label', $this->label)
@@ -268,7 +274,7 @@ class ContentArticleWidget extends AbstractWidget
             ];
         }
 
-        $getTable = static function ($tableName) use (&$getTable, $tables) {
+        $getTable = static function (string $tableName) use (&$getTable, $tables): false|string {
             if (!isset($tables[$tableName])) {
                 return false;
             }
@@ -303,7 +309,7 @@ class ContentArticleWidget extends AbstractWidget
     {
         $contentElements = [];
 
-        if (empty($recordId) || empty($ptableName)) {
+        if ($recordId === null || empty($ptableName)) {
             return $contentElements;
         }
 

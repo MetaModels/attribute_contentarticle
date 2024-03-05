@@ -12,6 +12,7 @@
     "true",
     "void",
     "mixed",
+    "ContaoCommunityAlliance\\Translator\\TranslatorInterface",
     "Contao\\ManagerBundle\\ContaoManagerBundle",
     "Contao\\ManagerPlugin\\Bundle\\BundlePluginInterface",
     "Contao\\ManagerPlugin\\Bundle\\Config\\BundleConfig",
