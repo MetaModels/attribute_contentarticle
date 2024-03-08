@@ -125,7 +125,7 @@ class ContentArticleWidget extends AbstractWidget
             );
             // @codingStandardsIgnoreEnd
             $input = System::getContainer()->get('contao.framework')?->getAdapter(Input::class);
-            assert($input instanceof Input);
+            assert($input instanceof Adapter);
         }
         $this->input = $input;
 
