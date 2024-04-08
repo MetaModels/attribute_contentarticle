@@ -322,7 +322,7 @@ class ArticleContent
         }
 
         // Invalid ID
-        if ($objContent->numRows < 1) {
+        if ($objContent->rowCount() < 1) {
             System::log('Invalid content element ID ' . $accessId, __METHOD__, TL_ERROR);
 
             return false;
