@@ -17,6 +17,7 @@
  * @author     Marc Reimann <reimann@mediendepot-ruhr.de>
  * @author     Ingolf Steinhardt <info@e-spin.de>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Arne Borchert <arne.borchert@fipps.de>
  * @copyright  2012-2022 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
