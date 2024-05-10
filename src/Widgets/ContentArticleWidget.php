@@ -32,6 +32,7 @@ use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\ContaoBacke
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Widget\AbstractWidget;
 use ContaoCommunityAlliance\Translator\TranslatorInterface as CcaTranslatorInterface;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Exception;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -81,9 +82,9 @@ class ContentArticleWidget extends AbstractWidget
     /**
      * The contao input.
      *
-     * @var Adapter|Input
+     * @var Adapter<Input>
      */
-    private Adapter|Input $input;
+    private Adapter $input;
 
     /**
      * The translator interface.
@@ -143,6 +144,7 @@ class ContentArticleWidget extends AbstractWidget
 
         parent::__construct($arrAttributes, $dcCompat);
 
+        /** @psalm-suppress InternalMethod - Class Adapter is internal, not the __call() method. Blame Contao. */
         $currentID        = $this->input->get('id');
         $this->hasEmptyId = empty($currentID);
     }
@@ -207,7 +209,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @return string Generated String.
      *
-     * @throws \Exception|\Doctrine\DBAL\Driver\Exception Throws Exceptions.
+     * @throws \Exception|Exception Throws Exceptions.
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
@@ -254,7 +256,7 @@ class ContentArticleWidget extends AbstractWidget
      *
      * @return bool|string Returns RootMetaModelTable.
      *
-     * @throws \Exception|\Doctrine\DBAL\Driver\Exception Throws an Exception.
+     * @throws \Exception|Exception Throws an Exception.
      */
     public function getRootMetaModelTable(string $tableName)
     {

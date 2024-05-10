@@ -92,6 +92,7 @@ class ArticleContent
      */
     public function toggleIcon(): string
     {
+        /** @psalm-suppress UndefinedClass */
         $controller = new \tl_content();
 
         return \call_user_func_array([$controller, 'toggleIcon'], \func_get_args());
