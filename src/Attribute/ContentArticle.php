@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2022 The MetaModels team.
+ * (c) 2012-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,16 +16,20 @@
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2012-2022 The MetaModels team.
+ * @copyright  2012-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
 
-
 namespace MetaModels\AttributeContentArticleBundle\Attribute;
 
+use Contao\ContentModel;
+use Contao\Controller;
+use Contao\Model\Collection;
+use Contao\System;
 use MetaModels\Attribute\BaseComplex;
 use MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This is the AttributeContentArticle class for handling article fields.
@@ -56,6 +60,7 @@ class ContentArticle extends BaseComplex
     public function getFilterOptions($idList, $usedOnly, &$arrCount = null)
     {
         // Needed to fake implement BaseComplex.
+        return [];
     }
 
     /**
@@ -79,7 +84,7 @@ class ContentArticle extends BaseComplex
      *
      * @param array $arrIds Array of Data Ids.
      *
-     * @return mixed[]
+     * @return array<string, mixed>
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -90,7 +95,6 @@ class ContentArticle extends BaseComplex
         $strColumn      = $this->getColName();
         $arrData        = [];
         $contentArticle = new ContentArticleWidget();
-        $rootTable      = $contentArticle->getRootMetaModelTable($strTable);
 
         foreach ($arrIds as $intId) {
             // Continue if it's a recursive call
@@ -102,12 +106,19 @@ class ContentArticle extends BaseComplex
             static::$arrCallIds[$strCallId] = true;
 
             // Generate list for backend.
-            if (TL_MODE == 'BE') {
+            $isBackend = (bool) System::getContainer()
+                ->get('contao.routing.scope_matcher')
+                ?->isBackendRequest(
+                    System::getContainer()->get('request_stack')?->getCurrentRequest() ?? Request::create('')
+                );
+            if ($isBackend) {
+                $rootTable = $contentArticle->getRootMetaModelTable($strTable);
+                assert(\is_string($rootTable));
                 $elements = $contentArticle->getContentTypesByRecordId($intId, $rootTable, $strColumn);
                 $content  = '';
-                if (count($elements)) {
+                if (\count($elements)) {
                     $content .= '<ul class="elements_container">';
-                    foreach ((array) $elements as $element) {
+                    foreach ($elements as $element) {
                         $content .= \sprintf(
                             '<li><div class="cte_type%s">' .
                             '<img src="system/themes/flexible/icons/%s.svg" width="16" height="16"> %s</div></li>',
@@ -127,14 +138,21 @@ class ContentArticle extends BaseComplex
             }
 
             // Generate output for frontend.
-            if (TL_MODE == 'FE') {
-                $objContent = \ContentModel::findPublishedByPidAndTable($intId, $strTable);
+            $isFrontend = (bool) System::getContainer()
+                ->get('contao.routing.scope_matcher')
+                ?->isFrontendRequest(
+                    System::getContainer()->get('request_stack')?->getCurrentRequest() ?? Request::create('')
+                );
+            if ($isFrontend) {
+                $objContent = ContentModel::findPublishedByPidAndTable($intId, $strTable);
                 $arrContent = [];
 
                 if ($objContent !== null) {
+                    assert($objContent instanceof Collection);
                     while ($objContent->next()) {
-                        if ($objContent->mm_slot == $strColumn) {
-                            $arrContent[] = \Controller::getContentElement($objContent->current());
+                        /** @psalm-suppress UndefinedMagicPropertyFetch */
+                        if ($objContent->mm_slot === $strColumn) {
+                            $arrContent[] = Controller::getContentElement($objContent->current());
                         }
                     }
                 }

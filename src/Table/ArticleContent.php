@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2023 The MetaModels team.
+ * (c) 2012-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,25 +17,21 @@
  * @author     Marc Reimann <reimann@mediendepot-ruhr.de>
  * @author     Ingolf Steinhardt <info@e-spin.de>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
- * @copyright  2012-2023 The MetaModels team.
+ * @copyright  2012-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
 
 namespace MetaModels\AttributeContentArticleBundle\Table;
 
-use Contao\Backend;
 use Contao\BackendUser;
 use Contao\DataContainer;
-use Contao\Environment;
 use Contao\Input;
 use Contao\System;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * This is a DCA helper class.
@@ -45,9 +41,9 @@ class ArticleContent
     /**
      * The database connection.
      *
-     * @var Connection|null
+     * @var Connection
      */
-    private Connection|null $connection;
+    private Connection $connection;
 
     /**
      * Symfony session object
@@ -64,15 +60,17 @@ class ArticleContent
      */
     public function __construct(Connection $connection = null, Session $session = null)
     {
-        if (null === ($this->connection = $connection)) {
+        if (null === $connection) {
             // @codingStandardsIgnoreStart
             @trigger_error(
                 'Connection is missing. It has to be passed in the constructor. Fallback will be dropped.',
                 E_USER_DEPRECATED
             );
             // @codingStandardsIgnoreEnd
-            $this->connection = System::getContainer()->get('database_connection');
+            $connection = System::getContainer()->get('database_connection');
+            assert($connection instanceof Connection);
         }
+        $this->connection = $connection;
 
         if (null === $session) {
             // @codingStandardsIgnoreStart
@@ -83,8 +81,8 @@ class ArticleContent
             // @codingStandardsIgnoreEnd
             $session = System::getContainer()->get('session');
             assert($session instanceof Session);
-            $this->session = $session;
         }
+        $this->session = $session;
     }
 
     /**
@@ -94,6 +92,7 @@ class ArticleContent
      */
     public function toggleIcon(): string
     {
+        /** @psalm-suppress UndefinedClass */
         $controller = new \tl_content();
 
         return \call_user_func_array([$controller, 'toggleIcon'], \func_get_args());
@@ -221,6 +220,7 @@ class ArticleContent
      */
     public function checkPermission(DataContainer $dataContainer): void
     {
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         if (BackendUser::getInstance()->isAdmin) {
             return;
         }
@@ -235,6 +235,7 @@ class ArticleContent
             case 'overrideAll':
             case 'cutAll':
             case 'copyAll':
+                /** @psalm-suppress UndefinedMagicPropertyFetch */
                 $objCes = $this->connection
                     ->createQueryBuilder()
                     ->select('t.id')
