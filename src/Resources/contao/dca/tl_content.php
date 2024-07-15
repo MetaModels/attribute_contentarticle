@@ -19,49 +19,6 @@
  * @filesource
  */
 
-use Contao\Input;
-use MetaModels\AttributeContentArticleBundle\Table\ArticleContent;
-
 $GLOBALS['TL_DCA']['tl_content']['fields']['mm_slot'] = [
     'sql' => "varchar(255) NOT NULL default ''",
 ];
-
-$strModule      = Input::get('do');
-$strTable       = Input::get('table');
-$strLangSupport = Input::get('langSupport');
-
-// Change TL_Content for the article popup
-if (\substr($strModule, 0, 10) == 'metamodel_' && $strTable == 'tl_content' && $strLangSupport === null) {
-    $GLOBALS['TL_DCA']['tl_content']['config']['ptable']                                =
-        Input::get('ptable');
-    $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][]                   =
-        [
-            ArticleContent::class,
-            'save'
-        ];
-    $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][]                     =
-        [
-            ArticleContent::class,
-            'checkPermission'
-        ];
-    $GLOBALS['TL_DCA']['tl_content']['config']['oncopy_callback'][]                     =
-        [
-            ArticleContent::class,
-            'updateCopyData'
-        ];
-    $GLOBALS['TL_DCA']['tl_content']['config']['oncut_callback'][]                      =
-        [
-            ArticleContent::class,
-            'updateCutData'
-        ];
-    $GLOBALS['TL_DCA']['tl_content']['list']['operations']['toggle']['button_callback'] =
-        [
-            ArticleContent::class,
-            'toggleIcon'
-        ];
-    $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['filter'][]                     =
-        [
-            'mm_slot=?',
-            Input::get('slot')
-        ];
-}

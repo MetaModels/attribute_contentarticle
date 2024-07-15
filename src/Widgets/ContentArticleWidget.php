@@ -33,12 +33,17 @@ use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Widget\Abst
 use ContaoCommunityAlliance\Translator\TranslatorInterface as CcaTranslatorInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class ContentArticleWidget
  *
  * @package MetaModels\AttributeContentArticleBundle\Widgets
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @psalm-suppress PropertyNotSetInConstructor
  */
@@ -216,19 +221,26 @@ class ContentArticleWidget extends AbstractWidget
     public function generate()
     {
         $rootTable    = (string) $this->getRootMetaModelTable($this->strTable);
-        $requestToken = System::getContainer()->get('contao.csrf.token_manager')?->getDefaultTokenValue();
 
-        $strQuery = \http_build_query([
-                                         'do'     => 'metamodel_' . ($rootTable ?: 'table_not_found'),
-                                         'table'  => 'tl_content',
-                                         'ptable' => $this->strTable,
-                                         'id'     => $this->currentRecord,
-                                         'mid'    => $this->currentRecord,
-                                         'slot'   => $this->strName,
-                                         'popup'  => 1,
-                                         'nb'     => 1,
-                                         'rt'     => $requestToken,
-                                     ]);
+        $urlGenerator = System::getContainer()->get('router');
+        assert($urlGenerator instanceof UrlGeneratorInterface);
+
+        $requestStack = System::getContainer()->get('request_stack');
+        assert($requestStack instanceof RequestStack);
+        $request = $requestStack->getCurrentRequest();
+        assert($request instanceof Request);
+
+        $url = $urlGenerator->generate(
+            'metamodels.content-article',
+            [
+                'tableName' => $rootTable,
+                'attribute' => $this->strName,
+                'itemId' => (string) $this->currentRecord,
+                'id' => (string) $this->currentRecord,
+                'ref' => $request->attributes->get('_contao_referer_id'),
+                'rt' => System::getContainer()->get('contao.csrf.token_manager')?->getDefaultTokenValue() ?? ''
+            ]
+        );
 
         $contentElements = $this->getContentTypesByRecordId($this->currentRecord, $rootTable, $this->strName);
 
@@ -242,7 +254,7 @@ class ContentArticleWidget extends AbstractWidget
             ->set('label', $this->label)
             ->set('readonly', $this->readonly)
             ->set('hasEmptyId', $this->hasEmptyId)
-            ->set('link', 'contao?' . $strQuery)
+            ->set('link', $url)
             ->set('elements', $contentElements)
             ->parse();
 
