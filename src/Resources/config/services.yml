@@ -6,10 +6,5 @@ services:
         tags:
             - { name: metamodels.attribute_factory }
 
-    MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
-      public: true
-      arguments:
-        - '@database_connection'
-
     MetaModels\AttributeContentArticleBundle\Controller\Backend\MetaModelController:
       tags: ['controller.service_arguments']
