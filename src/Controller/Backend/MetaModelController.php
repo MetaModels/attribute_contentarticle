@@ -128,6 +128,7 @@ class MetaModelController
         // HACK: DC_Table expects these:
         $_GET['table'] = 'tl_content';
 
+        /** @var class-string $driverClass */
         $driverClass = DataContainer::getDriverForTable('tl_content');
         /** @var DataContainer $dataContainer */
         $dataContainer         = new $driverClass('tl_content', []);

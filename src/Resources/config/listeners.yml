@@ -1,6 +1,8 @@
 services:
   MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
     public: false
+    arguments:
+      - '@database_connection'
     tags:
       - name: kernel.event_listener
         event: 'dc-general.model.post-duplicate'
