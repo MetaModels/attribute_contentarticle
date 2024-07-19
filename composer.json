@@ -31,7 +31,7 @@
     "ext-pdo": "*",
     "contao-community-alliance/dc-general": "^2.3",
     "contao/core-bundle": "^4.13.0 <5.0",
-    "metamodels/core": "^2.3.0@dev",
+    "metamodels/core": "^2.3@dev",
     "symfony/dependency-injection": "^5.4",
     "symfony/http-kernel": "^5.4"
   },
@@ -40,12 +40,6 @@
     "menatwork/contao-multicolumnwizard-bundle": "^3.4",
     "phpcq/runner-bootstrap": "^1.0@dev"
   },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://packages.cyberspectrum.de/r"
-    }
-  ],
   "autoload": {
     "psr-4": {
       "MetaModels\\AttributeContentArticleBundle\\": "src/"
