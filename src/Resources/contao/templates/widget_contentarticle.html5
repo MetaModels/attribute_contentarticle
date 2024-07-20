@@ -1,5 +1,5 @@
 <?php if ($this->hasEmptyId): ?>
-    <p class="tl_error" style="margin-top: 5px; margin-bottom: 5px;"><?= $this->translator->trans('missing_id', [], 'attribute_contentarticle') ?></p>
+    <p class="tl_error" style="margin-top: 5px; margin-bottom: 5px;"><?= $this->translator->trans('missing_id', [], 'tl_metamodel_attribute') ?></p>
     <button type="button" name="<?= $this->name ?>" class="tl_submit" disabled><?= $this->translator->trans('MSC.changeSelection', [], 'contao_default') ?></button>
 <?php else: ?>
     <div>
