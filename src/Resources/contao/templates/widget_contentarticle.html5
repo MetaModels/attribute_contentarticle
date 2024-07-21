@@ -1,6 +1,6 @@
 <?php if ($this->hasEmptyId): ?>
-    <p class="tl_error" style="margin-top: 5px; margin-bottom: 5px;"><?= $this->translate('attribute_contentarticle.missing_id') ?></p>
-    <button type="button" name="<?= $this->name ?>" class="tl_submit" disabled><?= $this->translate('MSC.changeSelection') ?></button>
+    <p class="tl_error" style="margin-top: 5px; margin-bottom: 5px;"><?= $this->translator->trans('missing_id', [], 'tl_metamodel_attribute') ?></p>
+    <button type="button" name="<?= $this->name ?>" class="tl_submit" disabled><?= $this->translator->trans('MSC.changeSelection', [], 'contao_default') ?></button>
 <?php else: ?>
     <div>
         <div class="selector_container">
@@ -12,7 +12,7 @@
                 <?php endforeach; ?>
             </ul>
             <?php if (!$this->readonly): ?>
-                <p><a id="ft_<?= $this->name ?>" href="<?= $this->link ?>" class="tl_submit"><?= $this->translate('MSC.changeSelection') ?></a></p>
+                <p><a id="ft_<?= $this->name ?>" href="<?= $this->link ?>" class="tl_submit"><?= $this->translator->trans('MSC.changeSelection', [], 'contao_default') ?></a></p>
             <?php endif; ?>
         </div>
         <?php if (!$this->readonly): ?>
