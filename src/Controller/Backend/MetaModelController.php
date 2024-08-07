@@ -24,7 +24,6 @@ use Contao\Ajax;
 use Contao\Backend;
 use Contao\BackendTemplate;
 use Contao\Controller;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\DataContainer;
 use Contao\EditableDataContainerInterface;
@@ -33,16 +32,15 @@ use Contao\ListableDataContainerInterface;
 use Contao\StringUtil;
 use Contao\System;
 use ContaoCommunityAlliance\DcGeneral\Factory\DcGeneralFactoryService;
-use ContaoCommunityAlliance\Translator\TranslatorInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use MetaModels\AttributeContentArticleBundle\Table\ArticleContent;
 use MetaModels\ViewCombination\ViewCombination;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
 
@@ -67,7 +65,6 @@ class MetaModelController
         string $itemId,
         Request $request,
         Connection $connection,
-        Session $session,
     ): Response {
         if ('' === $tableName || '' === $attribute || '' === $itemId) {
             throw new BadRequestHttpException();
@@ -92,6 +89,9 @@ class MetaModelController
         $template->host     = Backend::getDecodedHostname();
         $template->charset  = System::getContainer()->getParameter('kernel.charset');
         $template->isPopup  = true;
+
+        $session = $request->getSession();
+        assert($session instanceof SessionInterface);
 
         $session->set('CURRENT_ID', $itemId);
         // Define the current ID
