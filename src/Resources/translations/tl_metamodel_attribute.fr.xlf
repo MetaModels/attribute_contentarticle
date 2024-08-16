@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="src/Resources/translations/tl_metamodel_attribute.en.xlf" target-language="fr">
+    <body>
+      <trans-unit id="typeOptions.contentarticle" resname="typeOptions.contentarticle">
+        <source>Content article</source>
+        <target>Article de contenu</target>
+      </trans-unit>
+      <trans-unit id="missing_id" resname="missing_id">
+        <source>You must save the main data set before you can create new data.</source>
+        <target>Il faut enregistrer les données principales avant d'en créer de nouvelles.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
