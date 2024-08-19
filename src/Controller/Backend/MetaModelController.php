@@ -31,15 +31,11 @@ use Contao\Environment;
 use Contao\ListableDataContainerInterface;
 use Contao\StringUtil;
 use Contao\System;
-use ContaoCommunityAlliance\DcGeneral\Factory\DcGeneralFactoryService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use MetaModels\AttributeContentArticleBundle\Table\ArticleContent;
-use MetaModels\ViewCombination\ViewCombination;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -188,7 +184,7 @@ class MetaModelController
         string $attribute,
         string $itemId,
         Connection $connection,
-        Session $session,
+        SessionInterface $session,
         Security $security
     ): void {
         $GLOBALS['TL_DCA']['tl_content']['config']['onsubmit_callback'][] =
@@ -232,12 +228,12 @@ class MetaModelController
     /**
      * Check permissions to edit table tl_content.
      *
-     * @param string     $action
-     * @param string     $parent
-     * @param string     $itemId
-     * @param Connection $connection
-     * @param Session    $session
-     * @param Security   $security
+     * @param string           $action
+     * @param string           $parent
+     * @param string           $itemId
+     * @param Connection       $connection
+     * @param SessionInterface $session
+     * @param Security         $security
      *
      * @return callable
      *
@@ -248,7 +244,7 @@ class MetaModelController
         string $parent,
         string $itemId,
         Connection $connection,
-        Session $session,
+        SessionInterface $session,
         Security $security
     ): callable {
         return static function () use ($action, $parent, $itemId, $connection, $session, $security): void {
