@@ -80,6 +80,7 @@ class MetaModelController
         $template->headline = $attribute;
         $template->title    = StringUtil::specialchars(strip_tags($template->headline));
         // Load the language and DCA file
+        System::loadLanguageFile('default');
         System::loadLanguageFile('tl_content');
         Controller::loadDataContainer('tl_content');
 
