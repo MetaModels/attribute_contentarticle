@@ -235,10 +235,10 @@ class ContentArticleWidget extends AbstractWidget
             [
                 'tableName' => $rootTable,
                 'attribute' => $this->strName,
-                'itemId' => (string) $this->currentRecord,
-                'id' => (string) $this->currentRecord,
-                'ref' => $request->attributes->get('_contao_referer_id'),
-                'rt' => System::getContainer()->get('contao.csrf.token_manager')?->getDefaultTokenValue() ?? ''
+                'itemId'    => (string) $this->currentRecord,
+                'id'        => (string) $this->currentRecord,
+                'ref'       => $request->attributes->get('_contao_referer_id'),
+                'rt'        => System::getContainer()->get('contao.csrf.token_manager')?->getDefaultTokenValue() ?? ''
             ]
         );
 

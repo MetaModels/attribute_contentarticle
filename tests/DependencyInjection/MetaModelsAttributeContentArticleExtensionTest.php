@@ -28,7 +28,6 @@ use MetaModels\AttributeContentArticleBundle\Controller\Backend\MetaModelControl
 use MetaModels\AttributeContentArticleBundle\DependencyInjection\MetaModelsAttributeContentArticleExtension;
 use MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener;
 use MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener;
-use MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -49,7 +48,6 @@ class MetaModelsAttributeContentArticleExtensionTest extends TestCase
             'service_container',
             BackendEventListener::class,
             GetOptionsListener::class,
-            InitializeListener::class,
             AttributeTypeFactory::class,
             MetaModelController::class,
         ];
