@@ -23,7 +23,6 @@
     "email": "mail@metamodel.me",
     "issues": "https://github.com/MetaModels/attribute_contentarticle/issues",
     "wiki": "https://de.contaowiki.org/MetaModels",
-    "irc": "irc://irc.freenode.org/contao.mm",
     "source": "https://github.com/MetaModels/attribute_contentarticle"
   },
   "require": {
@@ -33,6 +32,7 @@
     "contao/core-bundle": "^4.13.0 <5.0",
     "metamodels/core": "^2.3@dev",
     "symfony/dependency-injection": "^5.4",
+    "symfony/http-foundation": "^5.4",
     "symfony/http-kernel": "^5.4"
   },
   "require-dev": {
