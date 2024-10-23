@@ -2,6 +2,6 @@
 
 use Contao\System;
 
-if (\is_array($this->raw)) {
+if (\is_array($this->raw) && \is_array($this->raw['value'])) {
   echo System::getContainer()->get('contao.string.html_decoder')->htmlToPlainText(\implode('', $this->raw['value']));
 }
