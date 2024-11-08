@@ -28,6 +28,7 @@ use MetaModels\AttributeContentArticleBundle\Controller\Backend\MetaModelControl
 use MetaModels\AttributeContentArticleBundle\DependencyInjection\MetaModelsAttributeContentArticleExtension;
 use MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener;
 use MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener;
+use MetaModels\AttributeContentArticleBundle\FileUsage\FileUsageProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -50,6 +51,7 @@ class MetaModelsAttributeContentArticleExtensionTest extends TestCase
             GetOptionsListener::class,
             AttributeTypeFactory::class,
             MetaModelController::class,
+            FileUsageProvider::class,
         ];
 
         self::assertCount(count($expectedDefinitions), $container->getDefinitions());
