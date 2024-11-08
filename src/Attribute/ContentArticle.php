@@ -104,6 +104,7 @@ class ContentArticle extends BaseComplex
             }
             static::$arrCallIds[$strCallId] = true;
 
+            // FIXME: Integrate 'mm_slot = $strColumn' filter here!!!!
             $objContent = ContentModel::findPublishedByPidAndTable($intId, $strTable);
             $arrContent = [];
 
