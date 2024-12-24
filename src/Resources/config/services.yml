@@ -18,5 +18,6 @@ services:
 #        $csrfTokenManager: '@contao.csrf.token_manager'
 #        $connection: '@database_connection'
 #        $csrfTokenName: '%contao.csrf_token_name%'
+#        $uploadPath: '%contao.upload_path%'
 #      tags:
 #        - { name: contao_file_usage.provider }
