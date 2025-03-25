@@ -8,16 +8,3 @@ services:
 
     MetaModels\AttributeContentArticleBundle\Controller\Backend\MetaModelController:
       tags: ['controller.service_arguments']
-
-#    MetaModels\AttributeContentArticleBundle\FileUsage\FileUsageProvider:
-#      public: true
-#      arguments:
-#        $factory: '@metamodels.factory'
-#        $urlGenerator: '@router'
-#        $requestStack: '@request_stack'
-#        $csrfTokenManager: '@contao.csrf.token_manager'
-#        $connection: '@database_connection'
-#        $csrfTokenName: '%contao.csrf_token_name%'
-#        $uploadPath: '%contao.upload_path%'
-#      tags:
-#        - { name: contao_file_usage.provider }
