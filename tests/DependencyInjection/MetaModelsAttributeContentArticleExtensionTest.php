@@ -28,8 +28,7 @@ use MetaModels\AttributeContentArticleBundle\Controller\Backend\MetaModelControl
 use MetaModels\AttributeContentArticleBundle\DependencyInjection\MetaModelsAttributeContentArticleExtension;
 use MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener;
 use MetaModels\AttributeContentArticleBundle\EventListener\GetOptionsListener;
-use MetaModels\AttributeContentArticleBundle\FileUsage\FileUsageProvider;
-use MetaModels\ContaoFrontendEditingBundle\MetaModelsContaoFrontendEditingBundle;
+use MetaModels\AttributeContentArticleBundle\MetaModelsAttributeContentArticleBundle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -43,7 +42,7 @@ class MetaModelsAttributeContentArticleExtensionTest extends TestCase
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
-        $container->setParameter('kernel.bundles', [MetaModelsContaoFrontendEditingBundle::class]);
+        $container->setParameter('kernel.bundles', [MetaModelsAttributeContentArticleBundle::class]);
 
         $extension = new MetaModelsAttributeContentArticleExtension();
         $extension->load([], $container);
