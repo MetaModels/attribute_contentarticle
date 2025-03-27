@@ -6,6 +6,7 @@
     "Contao\\ManagerPlugin\\Bundle\\Config\\BundleConfig",
     "Contao\\ManagerPlugin\\Bundle\\Parser\\ParserInterface",
     "Contao\\ManagerPlugin\\Routing\\RoutingPluginInterface",
+    "InspiredMinds\\ContaoFileUsage\\ContaoFileUsageBundle",
     "InspiredMinds\\ContaoFileUsage\\Provider\\FileUsageProviderInterface",
     "InspiredMinds\\ContaoFileUsage\\Result\\FileTreeMultipleResult",
     "InspiredMinds\\ContaoFileUsage\\Result\\FileTreeSingleResult",
