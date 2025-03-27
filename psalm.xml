@@ -10,7 +10,6 @@
     <directory name="src" />
     <ignoreFiles>
       <directory name="src/Resources/contao/dca"/>
-      <directory name="src/Resources/contao/languages"/>
     </ignoreFiles>
   </projectFiles>
 </psalm>
