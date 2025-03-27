@@ -1,6 +1,8 @@
 services:
   MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
     public: false
+    arguments:
+      - '@database_connection'
     tags:
       - name: kernel.event_listener
         event: 'dc-general.model.post-duplicate'
@@ -16,14 +18,3 @@ services:
       - name: kernel.event_listener
         event: 'men-at-work.multi-column-wizard.get-options'
         method: getOptions
-  MetaModels\AttributeContentArticleBundle\EventListener\InitializeListener:
-    public: false
-    arguments:
-      - "@security.token_storage"
-      - "@security.authentication.trust_resolver"
-      - "@contao.routing.scope_matcher"
-      - "@metamodels.view_combination"
-    tags:
-      - name: kernel.event_listener
-        event: kernel.request
-        priority: -600

@@ -1,1 +1,7 @@
-<?php if (is_array($this->raw)) echo implode('', $this->raw['value']); ?>
+<?php
+
+use Contao\System;
+
+if (\is_array($this->raw) && \is_array($this->raw['value'])) {
+  echo System::getContainer()->get('contao.string.html_decoder')->htmlToPlainText(\implode('', $this->raw['value']));
+}

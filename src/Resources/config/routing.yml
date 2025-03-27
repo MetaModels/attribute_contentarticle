@@ -1,0 +1,9 @@
+metamodels.content-article:
+  path: /contao/metamodel/{tableName}/{itemId}/content-article/{attribute}
+  defaults:
+    _controller: MetaModels\AttributeContentArticleBundle\Controller\Backend\MetaModelController
+    _scope: backend
+    _store_referrer: true
+    _token_check: true
+  requirements:
+    itemId: '[a-zA-Z0-9]*'

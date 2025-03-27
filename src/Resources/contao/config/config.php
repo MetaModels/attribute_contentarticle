@@ -19,6 +19,5 @@
  * @filesource
  */
 
-
 // Register backend form fields.
 $GLOBALS['BE_FFL']['contentarticle'] = \MetaModels\AttributeContentArticleBundle\Widgets\ContentArticleWidget::class;

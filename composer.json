@@ -1,6 +1,8 @@
 {
   "name": "metamodels/attribute_contentarticle",
   "description": "MetaModels attribute for content article",
+  "license": "LGPL-3.0-or-later",
+  "type": "contao-bundle",
   "keywords": [
     "contao",
     "metamodels",
@@ -8,9 +10,6 @@
     "article",
     "content element"
   ],
-  "type": "contao-bundle",
-  "homepage": "https://now.metamodel.me/",
-  "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Andreas Dziemba",
@@ -19,40 +18,52 @@
       "role": "Developer"
     }
   ],
+  "homepage": "https://now.metamodel.me/",
   "support": {
     "email": "mail@metamodel.me",
     "issues": "https://github.com/MetaModels/attribute_contentarticle/issues",
     "wiki": "https://de.contaowiki.org/MetaModels",
-    "irc": "irc://irc.freenode.org/contao.mm",
     "source": "https://github.com/MetaModels/attribute_contentarticle"
   },
   "require": {
-    "php": "^7.4",
+    "php": "^8.1",
     "ext-pdo": "*",
-    "contao-community-alliance/dc-general": "^2.2",
-    "contao/core-bundle": "^4.9.0, <4.13.0",
-    "metamodels/core": "^2.2",
-    "symfony/dependency-injection": "^4.4.6",
-    "symfony/http-kernel": "~4.4.13"
+    "contao-community-alliance/dc-general": "^2.3",
+    "contao-community-alliance/translator": "^2.4",
+    "contao/core-bundle": "^4.13.0 <5.0",
+    "doctrine/dbal": "^3.3",
+    "menatwork/contao-multicolumnwizard-bundle": "^3.6",
+    "metamodels/core": "^2.3",
+    "symfony/config": "^5.4",
+    "symfony/dependency-injection": "^5.4",
+    "symfony/http-foundation": "^5.4",
+    "symfony/http-kernel": "^5.4",
+    "symfony/routing": "^5.4",
+    "symfony/security-core": "^5.4",
+    "symfony/translation-contracts": "^2.3"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.1",
-    "menatwork/contao-multicolumnwizard-bundle": "^3.4",
-    "phpcq/all-tasks": "^1.2"
+    "inspiredminds/contao-file-usage": "^3.0.1",
+    "phpcq/runner-bootstrap": "^1.0@dev"
   },
   "autoload": {
     "psr-4": {
       "MetaModels\\AttributeContentArticleBundle\\": "src/"
     }
   },
-  "extra": {
-    "contao-manager-plugin": "MetaModels\\AttributeContentArticleBundle\\ContaoManager\\Plugin"
-  },
   "config": {
     "allow-plugins": {
       "contao-components/installer": false,
-      "contao/manager-plugin": false
+      "contao/manager-plugin": false,
+      "php-http/discovery": true
     },
     "sort-packages": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-feature/2.3.0": "2.3.x-dev"
+    },
+    "contao-manager-plugin": "MetaModels\\AttributeContentArticleBundle\\ContaoManager\\Plugin"
   }
 }

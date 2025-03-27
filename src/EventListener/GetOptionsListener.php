@@ -3,7 +3,7 @@
 /**
  * This file is part of MetaModels/attribute_contentarticle.
  *
- * (c) 2012-2020 The MetaModels team.
+ * (c) 2012-2024 The MetaModels team.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,15 +15,15 @@
  * @author     Andreas Dziemba <adziemba@web.de>
  * @author     Stefan Heimes <stefan_heimes@hotmail.com>
  * @author     Ingolf Steinhardt <info@e-spin.de>
- * @copyright  2012-2020 The MetaModels team.
+ * @copyright  2012-2024 The MetaModels team.
  * @license    https://github.com/MetaModels/attribute_contentarticle/blob/master/LICENSE LGPL-3.0-or-later
  * @filesource
  */
 
 namespace MetaModels\AttributeContentArticleBundle\EventListener;
 
+use MenAtWork\MultiColumnWizardBundle\Event\GetOptionsEvent;
 use MetaModels\IFactory;
-use MultiColumnWizard\Event\GetOptionsEvent;
 
 /**
  * Handle events for tl_metamodel_attribute.
@@ -35,7 +35,7 @@ class GetOptionsListener
      *
      * @var IFactory
      */
-    private $factory;
+    private IFactory $factory;
 
     /**
      * Create a new instance.
@@ -55,6 +55,8 @@ class GetOptionsListener
      * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameters)
+     *
+     * @psalm-suppress DeprecatedClass
      */
     public function getOptions(GetOptionsEvent $event)
     {
