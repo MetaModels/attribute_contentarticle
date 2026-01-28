@@ -63,9 +63,8 @@ class ContentArticleWidgetTest extends TestCase
                        ->getMock();
 
         $widget
-            ->expects(self::any())
-            ->method('import')
-            ->withConsecutive([Config::class, 'Config']);
+            ->expects($this->never())
+            ->method('import');
 
         self::assertEmpty($widget->getAttributes());
     }
