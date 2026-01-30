@@ -141,7 +141,7 @@ class BackendEventListener
     private function duplicateContentEntries(string $strTable, int $intSourceId, int $intDestinationId): void
     {
         $metaModel = $this->factory->getMetaModel($strTable);
-        if($metaModel === null){
+        if ($metaModel === null) {
             return;
         }
 
