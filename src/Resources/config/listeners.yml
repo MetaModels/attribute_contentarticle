@@ -2,6 +2,7 @@ services:
   MetaModels\AttributeContentArticleBundle\EventListener\BackendEventListener:
     public: false
     arguments:
+      - '@metamodels.factory'
       - '@database_connection'
     tags:
       - name: kernel.event_listener
